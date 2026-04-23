@@ -17,6 +17,7 @@ class HandleAppearance
     public function handle(Request $request, Closure $next): Response
     {
         View::share('appearance', $request->cookie('appearance') ?? 'system');
+        View::share('accent_color', $request->cookie('accent_color') ?? '');
 
         return $next($request);
     }

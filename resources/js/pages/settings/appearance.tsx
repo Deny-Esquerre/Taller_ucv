@@ -1,22 +1,74 @@
 import { Head } from '@inertiajs/react';
 import AppearanceTabs from '@/components/appearance-tabs';
 import Heading from '@/components/heading';
+import { useAppearance } from '@/hooks/use-appearance';
+import { cn } from '@/lib/utils';
 import { edit as editAppearance } from '@/routes/appearance';
+import { Check } from 'lucide-react';
 
 export default function Appearance() {
+    const { accentColor, updateAccentColor } = useAppearance();
+
+    const colors = [
+        { name: 'Predeterminado', value: '' },
+        { name: 'Azul 1', value: '#0069c0' },
+        { name: 'Azul 2', value: '#137fd9' },
+        { name: 'Azul 3', value: '#6bbef9' },
+        { name: 'Rosa 1', value: '#ff1f8e' },
+        { name: 'Rosa 2', value: '#fd439f' },
+    ];
+
     return (
         <>
-            <Head title="Appearance settings" />
+            <Head title="Ajustes de apariencia" />
 
-            <h1 className="sr-only">Appearance settings</h1>
+            <h1 className="sr-only">Ajustes de apariencia</h1>
 
-            <div className="space-y-6">
-                <Heading
-                    variant="small"
-                    title="Appearance settings"
-                    description="Update your account's appearance settings"
-                />
-                <AppearanceTabs />
+            <div className="space-y-10">
+                <section className="space-y-6">
+                    <Heading
+                        variant="small"
+                        title="Tema"
+                        description="Elige cómo quieres que se vea la aplicación"
+                    />
+                    <AppearanceTabs />
+                </section>
+
+                <section className="space-y-6">
+                    <Heading
+                        variant="small"
+                        title="Color de énfasis"
+                        description="Personaliza el color principal de la aplicación"
+                    />
+                    
+                    <div className="grid grid-cols-3 gap-3 sm:grid-cols-6 max-w-lg">
+                        {colors.map((color) => (
+                            <button
+                                key={color.name}
+                                onClick={() => updateAccentColor(color.value)}
+                                className={cn(
+                                    "group relative flex h-12 w-full items-center justify-center rounded-lg border-2 transition-all hover:scale-105",
+                                    accentColor === color.value 
+                                        ? "border-primary" 
+                                        : "border-transparent bg-neutral-100 dark:bg-neutral-800"
+                                )}
+                                title={color.name}
+                            >
+                                <div 
+                                    className={cn(
+                                        "h-6 w-6 rounded-full shadow-sm",
+                                        !color.value ? "bg-zinc-900 dark:bg-zinc-100" : ""
+                                    )}
+                                    style={color.value ? { backgroundColor: color.value } : {}}
+                                />
+                                {accentColor === color.value && (
+                                    <Check className="absolute top-1 right-1 h-3 w-3 text-primary-foreground bg-primary rounded-full p-0.5" />
+                                )}
+                                <span className="sr-only">{color.name}</span>
+                            </button>
+                        ))}
+                    </div>
+                </section>
             </div>
         </>
     );
@@ -25,7 +77,7 @@ export default function Appearance() {
 Appearance.layout = {
     breadcrumbs: [
         {
-            title: 'Appearance settings',
+            title: 'Ajustes de apariencia',
             href: editAppearance(),
         },
     ],
