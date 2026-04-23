@@ -183,7 +183,8 @@ export function ChartAreaInteractive() {
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
         <ChartContainer
           config={chartConfig}
-          className="aspect-auto h-[250px] w-full"
+          className="w-full"
+          style={{ height: "300px", minHeight: "300px" }}
         >
           <AreaChart data={filteredData}>
             <defs>

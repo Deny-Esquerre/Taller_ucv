@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\PermissionController::index
  * @see app/Http/Controllers/PermissionController.php:14
@@ -42,41 +42,6 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     method: 'head',
 })
 
-    /**
-* @see \App\Http\Controllers\PermissionController::index
- * @see app/Http/Controllers/PermissionController.php:14
- * @route '/permissions'
- */
-    const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-        action: index.url(options),
-        method: 'get',
-    })
-
-            /**
-* @see \App\Http\Controllers\PermissionController::index
- * @see app/Http/Controllers/PermissionController.php:14
- * @route '/permissions'
- */
-        indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: index.url(options),
-            method: 'get',
-        })
-            /**
-* @see \App\Http\Controllers\PermissionController::index
- * @see app/Http/Controllers/PermissionController.php:14
- * @route '/permissions'
- */
-        indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: index.url({
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'HEAD',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'get',
-        })
-    
-    index.form = indexForm
 /**
 * @see \App\Http\Controllers\PermissionController::update
  * @see app/Http/Controllers/PermissionController.php:29
@@ -110,38 +75,6 @@ update.put = (options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(options),
     method: 'put',
 })
-
-    /**
-* @see \App\Http\Controllers\PermissionController::update
- * @see app/Http/Controllers/PermissionController.php:29
- * @route '/permissions'
- */
-    const updateForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-        action: update.url({
-                    [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                        _method: 'PUT',
-                        ...(options?.query ?? options?.mergeQuery ?? {}),
-                    }
-                }),
-        method: 'post',
-    })
-
-            /**
-* @see \App\Http\Controllers\PermissionController::update
- * @see app/Http/Controllers/PermissionController.php:29
- * @route '/permissions'
- */
-        updateForm.put = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-            action: update.url({
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'PUT',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'post',
-        })
-    
-    update.form = updateForm
 const PermissionController = { index, update }
 
 export default PermissionController

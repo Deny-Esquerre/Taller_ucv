@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\WorkshopHistoryController::index
  * @see app/Http/Controllers/WorkshopHistoryController.php:12
@@ -42,41 +42,6 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     method: 'head',
 })
 
-    /**
-* @see \App\Http\Controllers\WorkshopHistoryController::index
- * @see app/Http/Controllers/WorkshopHistoryController.php:12
- * @route '/workshops/history'
- */
-    const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-        action: index.url(options),
-        method: 'get',
-    })
-
-            /**
-* @see \App\Http\Controllers\WorkshopHistoryController::index
- * @see app/Http/Controllers/WorkshopHistoryController.php:12
- * @route '/workshops/history'
- */
-        indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: index.url(options),
-            method: 'get',
-        })
-            /**
-* @see \App\Http\Controllers\WorkshopHistoryController::index
- * @see app/Http/Controllers/WorkshopHistoryController.php:12
- * @route '/workshops/history'
- */
-        indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: index.url({
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'HEAD',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'get',
-        })
-    
-    index.form = indexForm
 /**
 * @see \App\Http\Controllers\WorkshopHistoryController::duplicate
  * @see app/Http/Controllers/WorkshopHistoryController.php:27
@@ -143,42 +108,6 @@ duplicate.head = (args: { workshop: number | { id: number } } | [workshop: numbe
     url: duplicate.url(args, options),
     method: 'head',
 })
-
-    /**
-* @see \App\Http\Controllers\WorkshopHistoryController::duplicate
- * @see app/Http/Controllers/WorkshopHistoryController.php:27
- * @route '/workshops/duplicate/{workshop}'
- */
-    const duplicateForm = (args: { workshop: number | { id: number } } | [workshop: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-        action: duplicate.url(args, options),
-        method: 'get',
-    })
-
-            /**
-* @see \App\Http\Controllers\WorkshopHistoryController::duplicate
- * @see app/Http/Controllers/WorkshopHistoryController.php:27
- * @route '/workshops/duplicate/{workshop}'
- */
-        duplicateForm.get = (args: { workshop: number | { id: number } } | [workshop: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: duplicate.url(args, options),
-            method: 'get',
-        })
-            /**
-* @see \App\Http\Controllers\WorkshopHistoryController::duplicate
- * @see app/Http/Controllers/WorkshopHistoryController.php:27
- * @route '/workshops/duplicate/{workshop}'
- */
-        duplicateForm.head = (args: { workshop: number | { id: number } } | [workshop: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
-            action: duplicate.url(args, {
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'HEAD',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'get',
-        })
-    
-    duplicate.form = duplicateForm
 const WorkshopHistoryController = { index, duplicate }
 
 export default WorkshopHistoryController

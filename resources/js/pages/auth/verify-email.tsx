@@ -38,9 +38,3 @@ export default function VerifyEmail({ status }: { status?: string }) {
         </>
     );
 }
-
-VerifyEmail.layout = {
-    title: 'Verify email',
-    description:
-        'Please verify your email address by clicking on the link we just emailed to you.',
-};

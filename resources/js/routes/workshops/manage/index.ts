@@ -1,4 +1,4 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\WorkshopManagementController::store
  * @see app/Http/Controllers/WorkshopManagementController.php:22
@@ -33,27 +33,6 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     method: 'post',
 })
 
-    /**
-* @see \App\Http\Controllers\WorkshopManagementController::store
- * @see app/Http/Controllers/WorkshopManagementController.php:22
- * @route '/workshops/manage'
- */
-    const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-        action: store.url(options),
-        method: 'post',
-    })
-
-            /**
-* @see \App\Http\Controllers\WorkshopManagementController::store
- * @see app/Http/Controllers/WorkshopManagementController.php:22
- * @route '/workshops/manage'
- */
-        storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-            action: store.url(options),
-            method: 'post',
-        })
-    
-    store.form = storeForm
 /**
 * @see \App\Http\Controllers\WorkshopManagementController::destroy
  * @see app/Http/Controllers/WorkshopManagementController.php:46
@@ -111,38 +90,6 @@ destroy.delete = (args: { blockedDay: number | { id: number } } | [blockedDay: n
     url: destroy.url(args, options),
     method: 'delete',
 })
-
-    /**
-* @see \App\Http\Controllers\WorkshopManagementController::destroy
- * @see app/Http/Controllers/WorkshopManagementController.php:46
- * @route '/workshops/manage/{blockedDay}'
- */
-    const destroyForm = (args: { blockedDay: number | { id: number } } | [blockedDay: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-        action: destroy.url(args, {
-                    [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                        _method: 'DELETE',
-                        ...(options?.query ?? options?.mergeQuery ?? {}),
-                    }
-                }),
-        method: 'post',
-    })
-
-            /**
-* @see \App\Http\Controllers\WorkshopManagementController::destroy
- * @see app/Http/Controllers/WorkshopManagementController.php:46
- * @route '/workshops/manage/{blockedDay}'
- */
-        destroyForm.delete = (args: { blockedDay: number | { id: number } } | [blockedDay: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
-            action: destroy.url(args, {
-                        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
-                            _method: 'DELETE',
-                            ...(options?.query ?? options?.mergeQuery ?? {}),
-                        }
-                    }),
-            method: 'post',
-        })
-    
-    destroy.form = destroyForm
 const manage = {
     store: Object.assign(store, store),
 destroy: Object.assign(destroy, destroy),

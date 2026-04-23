@@ -1,7 +1,7 @@
 import { createInertiaApp } from '@inertiajs/react';
-import { Toaster } from '@/components/ui/sonner';
-import { TooltipProvider } from '@/components/ui/tooltip';
-import { initializeTheme } from '@/hooks/use-appearance';
+import createServer from '@inertiajs/react/server';
+import { createRoot } from 'react-dom/client';
+import { HttpException } from '@solidjs/router';
 import AppLayout from '@/layouts/app-layout';
 import AuthLayout from '@/layouts/auth-layout';
 import SettingsLayout from '@/layouts/settings/layout';
@@ -10,11 +10,6 @@ const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
-    resolve: (name) => {
-        const pages = import.meta.glob('./pages/**/*.tsx', { eager: true });
-
-        return pages[`./pages/${name}.tsx`];
-    },
     layout: (name) => {
         switch (true) {
             case name === 'welcome':
@@ -27,19 +22,13 @@ createInertiaApp({
                 return AppLayout;
         }
     },
-    strictMode: true,
-    withApp(app) {
-        return (
-            <TooltipProvider delayDuration={0}>
-                {app}
-                <Toaster />
-            </TooltipProvider>
-        );
-    },
-    progress: {
-        color: '#4B5563',
+    resolve: (name) => {
+        const pages = import.meta.glob('./pages/**/*.tsx', { eager: true });
+
+        return pages[`./pages/${name}.tsx`];
     },
 });
 
-// This will set light / dark mode on load...
-initializeTheme();
+createServer((page) =>
+    createRoot(document.getElementById('app') as HTMLElement, page)
+);

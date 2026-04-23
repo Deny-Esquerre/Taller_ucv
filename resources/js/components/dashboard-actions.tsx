@@ -16,7 +16,7 @@ export function DashboardActions() {
           <Button 
             variant="outline" 
             size="sm" 
-            className="flex-1 md:flex-none bg-background/50 border-green-600/20 text-green-700 hover:bg-green-50 dark:text-green-400 dark:hover:bg-green-900/10 dark:border-green-900/30"
+            className="flex-1 md:flex-none"
           >
             <FileSpreadsheet className="mr-2 h-4 w-4" />
             Excel
@@ -25,7 +25,7 @@ export function DashboardActions() {
           <Button 
             variant="outline" 
             size="sm" 
-            className="flex-1 md:flex-none bg-background/50 border-red-600/20 text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/10 dark:border-red-900/30"
+            className="flex-1 md:flex-none"
           >
             <FileText className="mr-2 h-4 w-4" />
             PDF

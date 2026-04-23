@@ -223,16 +223,3 @@ export default function Create({ users, duplicateFrom }: Props) {
         </>
     );
 }
-
-Create.layout = {
-    breadcrumbs: [
-        {
-            title: 'Talleres',
-            href: workshopsIndex().url,
-        },
-        {
-            title: 'Crear Taller',
-            href: workshopsCreate().url,
-        },
-    ],
-};

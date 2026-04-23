@@ -2,10 +2,18 @@
 
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
+use Illuminate\Support\Facades\Auth;
 
-Route::inertia('/', 'welcome', [
+Route::get('/', function () {
+    if (Auth::check()) {
+        return redirect()->route('dashboard');
+    }
+    return redirect('/login');
+})->name('home');
+
+Route::inertia('/login', 'auth/login', [
     'canRegister' => Features::enabled(Features::registration()),
-])->name('home');
+]);
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', \App\Http\Controllers\DashboardController::class)->name('dashboard');

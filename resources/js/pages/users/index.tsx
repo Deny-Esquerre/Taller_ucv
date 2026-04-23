@@ -83,12 +83,8 @@ export default function UserIndex({ users }: Props) {
 
     const handleCreateSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        createForm.post(userStore().url, {
-            onSuccess: () => {
-                setIsCreateOpen(false);
-                createForm.reset();
-            },
-        });
+        console.log('Creating user with data:', createForm.data);
+        createForm.post('/users');
     };
 
     const openEditModal = (user: User) => {
@@ -107,10 +103,11 @@ export default function UserIndex({ users }: Props) {
         e.preventDefault();
         if (!selectedUser) return;
         
-        editForm.put(userUpdate(selectedUser.id).url, {
+        editForm.put(`/users/${selectedUser.id}`, {
             onSuccess: () => {
                 setIsEditOpen(false);
                 editForm.reset();
+                window.location.reload();
             },
         });
     };
@@ -118,7 +115,12 @@ export default function UserIndex({ users }: Props) {
     const { delete: destroyAction } = useForm();
 
     const handleDelete = (id: number) => {
-        destroyAction(userDestroy(id).url);
+        destroyAction(`/users/${id}`, { 
+            _method: 'DELETE',
+            onSuccess: () => {
+                window.location.reload();
+            },
+        });
     };
 
     return (
@@ -255,9 +257,15 @@ export default function UserIndex({ users }: Props) {
                                         <SelectContent className="rounded-xl border-border/50"><SelectItem value="practitioner">Practicante</SelectItem><SelectItem value="admin">Admin</SelectItem></SelectContent>
                                     </Select>
                                 </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1.5">
                                     <Label className="text-xs font-medium text-muted-foreground ml-1">Contraseña</Label>
                                     <Input type="password" value={createForm.data.password} onChange={e => createForm.setData('password', e.target.value)} className="bg-muted/40 border-border/50 h-10 rounded-lg px-4 text-sm" />
+                                </div>
+                                <div className="space-y-1.5">
+                                    <Label className="text-xs font-medium text-muted-foreground ml-1">Confirmar contraseña</Label>
+                                    <Input type="password" value={createForm.data.password_confirmation} onChange={e => createForm.setData('password_confirmation', e.target.value)} className="bg-muted/40 border-border/50 h-10 rounded-lg px-4 text-sm" />
                                 </div>
                             </div>
                         </div>
@@ -313,8 +321,3 @@ export default function UserIndex({ users }: Props) {
         </div>
     );
 }
-
-// @ts-ignore
-UserIndex.layout = (page: any) => (
-    <AppLayout breadcrumbs={breadcrumbs} children={page} />
-);

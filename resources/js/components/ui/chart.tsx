@@ -50,10 +50,11 @@ function ChartContainer({
           "flex aspect-video justify-center text-xs [&_.recharts-cartesian-grid-horizontal_line[stroke-dasharray]]:stroke-muted-foreground/20 [&_.recharts-cartesian-grid-vertical_line[stroke-dasharray]]:stroke-muted-foreground/20 [&_.recharts-cartesian-grid_line[stroke-dasharray]]:stroke-muted-foreground/20 [&_.recharts-curve.recharts-area]:fill-current [&_.recharts-dot]:fill-background [&_.recharts-dot]:stroke-current [&_.recharts-dot]:stroke-2 [&_.recharts-grid-line]:stroke-muted-foreground/20 [&_.recharts-label]:fill-foreground [&_.recharts-legend-item]:text-foreground [&_.recharts-polar-grid-concentric-polygon]:stroke-muted-foreground/20 [&_.recharts-polar-grid-concentric-path]:stroke-muted-foreground/20 [&_.recharts-polar-grid-polygonal]:stroke-muted-foreground/20 [&_.recharts-radar-ring]:stroke-muted-foreground/20 [&_.recharts-sector]:stroke-background [&_.recharts-sector]:outline-none [&_.recharts-surface]:outline-none [&_.recharts-tooltip-cursor]:stroke-muted-foreground/20 [&_.recharts-tooltip-item-list]:!p-0 [&_.recharts-tooltip-wrapper]:!outline-none [&_.recharts-tooltip-wrapper]:!border-none [&_.recharts-tooltip-wrapper]:!bg-transparent",
           className
         )}
+        style={{ width: "100%", height: "100%" }}
         {...props}
       >
         <ChartStyle id={idVar} config={config} />
-        <RechartsPrimitive.ResponsiveContainer>
+        <RechartsPrimitive.ResponsiveContainer width="100%" height="100%">
           {children}
         </RechartsPrimitive.ResponsiveContainer>
       </div>

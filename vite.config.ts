@@ -4,12 +4,6 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig(async () => {
-    let wayfinder = null;
-    if (process.env.NODE_ENV !== 'production') {
-        const { wayfinder: wf } = await import('@laravel/vite-plugin-wayfinder');
-        wayfinder = wf;
-    }
-
     return {
         plugins: [
             laravel({
@@ -23,10 +17,7 @@ export default defineConfig(async () => {
                 },
             }),
             tailwindcss(),
-            wayfinder && wayfinder({
-                generateOnBuild: false,
-            }),
-        ].filter(Boolean),
+        ],
     };
 });
 

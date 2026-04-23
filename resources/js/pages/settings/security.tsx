@@ -1,7 +1,6 @@
 import { Form, Head } from '@inertiajs/react';
 import { ShieldCheck } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import SecurityController from '@/actions/App/Http/Controllers/Settings/SecurityController';
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
 import PasswordInput from '@/components/password-input';
@@ -10,8 +9,6 @@ import TwoFactorSetupModal from '@/components/two-factor-setup-modal';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { useTwoFactorAuth } from '@/hooks/use-two-factor-auth';
-import { edit } from '@/routes/security';
-import { disable, enable } from '@/routes/two-factor';
 
 type Props = {
     canManageTwoFactor?: boolean;
@@ -63,7 +60,8 @@ export default function Security({
                 />
 
                 <Form
-                    {...SecurityController.update.form()}
+                    action="/settings/password"
+                    method="post"
                     options={{
                         preserveScroll: true,
                     }}
@@ -163,7 +161,7 @@ export default function Security({
                             </p>
 
                             <div className="relative inline">
-                                <Form {...disable.form()}>
+                                <Form action="/user/two-factor-authentication" method="delete">
                                     {({ processing }) => (
                                         <Button
                                             variant="destructive"
@@ -196,14 +194,9 @@ export default function Security({
                                         <ShieldCheck />
                                         Continuar configuración
                                     </Button>
-                                ) : (
-                                    <Form
-                                        {...enable.form()}
-                                        onSuccess={() =>
-                                            setShowSetupModal(true)
-                                        }
-                                    >
-                                        {({ processing }) => (
+) : (
+                                    <Form action="/user/two-factor-authentication" method="post">
+                                    {({ processing }) => (
                                             <Button
                                                 type="submit"
                                                 disabled={processing}
@@ -233,12 +226,3 @@ export default function Security({
         </>
     );
 }
-
-Security.layout = {
-    breadcrumbs: [
-        {
-            title: 'Ajustes de seguridad',
-            href: edit(),
-        },
-    ],
-};

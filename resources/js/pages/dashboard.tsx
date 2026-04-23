@@ -1,5 +1,4 @@
 import { Head } from '@inertiajs/react';
-import { dashboard } from '@/routes';
 import { SectionCards } from '@/components/section-cards';
 import { ChartAreaInteractive } from '@/components/dashboard-chart';
 import { DashboardActions } from '@/components/dashboard-actions';
@@ -25,12 +24,3 @@ export default function Dashboard({ stats }: { stats: any }) {
         </>
     );
 }
-
-Dashboard.layout = {
-    breadcrumbs: [
-        {
-            title: 'Dashboard',
-            href: dashboard().url,
-        },
-    ],
-};
