@@ -19,6 +19,9 @@ export default defineConfig({
         }),
         tailwindcss(),
         wayfinder({
+            generateOnBuild: process.env.NODE_ENV !== 'production',
+        }),
+
             formVariants: true,
         }),
     ],
