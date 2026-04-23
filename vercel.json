@@ -1,5 +1,5 @@
 {
-    "framework": "laravel",
+    "framework": null,
     "version": 2,
     "routes": [
         {
@@ -7,7 +7,7 @@
             "dest": "/public/build/$1"
         },
         {
-            "src": "/(css|js|images|fonts|favicon.ico|favicon.png)/(.*)",
+            "src": "/(css|js|images|fonts)/(.*)",
             "dest": "/public/$1/$2"
         },
         {
