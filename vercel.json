@@ -1,18 +1,20 @@
 {
     "version": 2,
-    "builds": [
-        {
-            "src": "api/index.php",
-            "use": "@vercel/laravel"
-        },
-        {
-            "src": "public/**",
-            "use": "static"
-        }
-    ],
     "routes": [
         {
-            "src": "/(.*)",
+            "src": "/build/(.*)", 
+            "dest": "/public/build/$1"
+        },
+        {
+            "src": "/css/(.*)", 
+            "dest": "/public/css/$1"
+        },
+        {
+            "src": "/js/(.*)", 
+            "dest": "/public/js/$1"
+        },
+        {
+            "src": "/(.*)", 
             "dest": "/api/index.php"
         }
     ],
