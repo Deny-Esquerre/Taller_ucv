@@ -19,10 +19,9 @@ export default defineConfig({
             },
         }),
         tailwindcss(),
-        wayfinder({
-            // Desactivar generación automática en producción (Vercel) 
-            // ya que no hay PHP disponible durante el build de assets
+        // Solo cargar wayfinder si NO estamos en Vercel/Producción
+        process.env.NODE_ENV !== 'production' && wayfinder({
             generateOnBuild: false,
         }),
-    ],
+    ].filter(Boolean),
 });
