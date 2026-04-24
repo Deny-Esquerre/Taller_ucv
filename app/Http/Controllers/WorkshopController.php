@@ -36,17 +36,46 @@ class WorkshopController extends Controller
             'title' => 'required|string|max:255',
             'shift_date' => 'required|date',
             'shift_type' => 'required|in:morning,afternoon,night',
+            'shift_time' => 'nullable|date_format:H:i',
+            'brand' => 'nullable|string|max:255',
+            'contact_name' => 'nullable|string|max:255',
+            'contact_position' => 'nullable|string|max:255',
+            'contact_email_b' => 'nullable|email',
+            'contact_email_n' => 'nullable|email',
+            'contact_phone' => 'nullable|string|max:50',
+            'speaker' => 'nullable|string|max:255',
+            'speaker_linkedin' => 'nullable|url',
+            'drive_logo_photo' => 'nullable|string|max:500',
+            'drive_difusion' => 'nullable|string|max:500',
+            'inscription_link' => 'nullable|url',
+            'inscription_responses' => 'nullable|string|max:500',
+            'attendees_link' => 'nullable|url',
+            'attendee_responses' => 'nullable|string|max:500',
+            'event_photos' => 'nullable|string|max:500',
+            'comments' => 'nullable|string',
             'representative' => 'required|string|max:255',
             'email' => 'required|email',
             'modality' => 'required|in:virtual,presencial',
-            'meeting_link' => 'required_if:modality,virtual|nullable|url',
-            'location' => 'required_if:modality,presencial|nullable|string|max:255',
-            'year' => 'required|integer|min:2000|max:' . (date('Y') + 10),
+            'meeting_link' => 'nullable|url',
+            'location' => 'nullable|string|max:255',
+            'year' => 'nullable|integer|min:2000|max:' . (date('Y') + 10),
         ]);
 
-        Workshop::create($request->only(['user_id', 'title', 'shift_date', 'shift_type', 'representative', 'email', 'modality', 'meeting_link', 'location', 'year']));
+        $data = $request->only([
+            'user_id', 'title', 'shift_date', 'shift_type', 'shift_time', 'brand',
+            'contact_name', 'contact_position', 'contact_email_b', 'contact_email_n',
+            'contact_phone', 'speaker', 'speaker_linkedin', 'drive_logo_photo', 'drive_difusion',
+            'inscription_link', 'inscription_responses', 'attendees_link', 'attendee_responses',
+            'event_photos', 'comments', 'representative', 'email', 'modality', 'meeting_link',
+            'location', 'year', 'status'
+        ]);
 
-        return redirect()->route('workshops.index')->with('message', 'Taller creado exitosamente.');
+        $data['year'] = $data['year'] ?: date('Y');
+        $data['status'] = $data['status'] ?? 'scheduled';
+
+        Workshop::create($data);
+
+        return response()->json(['message' => 'Taller creado exitosamente.']);
     }
 
     public function show(Workshop $workshop)
@@ -76,15 +105,45 @@ class WorkshopController extends Controller
             'title' => 'required|string|max:255',
             'shift_date' => 'required|date',
             'shift_type' => 'required|in:morning,afternoon,night',
+            'shift_time' => 'nullable|date_format:H:i',
+            'brand' => 'nullable|string|max:255',
+            'contact_name' => 'nullable|string|max:255',
+            'contact_position' => 'nullable|string|max:255',
+            'contact_email_b' => 'nullable|email',
+            'contact_email_n' => 'nullable|email',
+            'contact_phone' => 'nullable|string|max:50',
+            'speaker' => 'nullable|string|max:255',
+            'speaker_linkedin' => 'nullable|url',
+            'drive_logo_photo' => 'nullable|string|max:500',
+            'drive_difusion' => 'nullable|string|max:500',
+            'inscription_link' => 'nullable|url',
+            'inscription_responses' => 'nullable|string|max:500',
+            'attendees_link' => 'nullable|url',
+            'attendee_responses' => 'nullable|string|max:500',
+            'event_photos' => 'nullable|string|max:500',
+            'comments' => 'nullable|string',
             'representative' => 'required|string|max:255',
             'email' => 'required|email',
             'modality' => 'required|in:virtual,presencial',
-            'year' => 'required|integer|min:2000|max:' . (date('Y') + 10),
+            'meeting_link' => 'nullable|url',
+            'location' => 'nullable|string|max:255',
+            'year' => 'nullable|integer|min:2000|max:' . (date('Y') + 10),
         ]);
 
-        $workshop->update($request->only(['user_id', 'title', 'shift_date', 'shift_type', 'representative', 'email', 'modality', 'year']));
+        $data = $request->only([
+            'user_id', 'title', 'shift_date', 'shift_type', 'shift_time', 'brand',
+            'contact_name', 'contact_position', 'contact_email_b', 'contact_email_n',
+            'contact_phone', 'speaker', 'speaker_linkedin', 'drive_logo_photo', 'drive_difusion',
+            'inscription_link', 'inscription_responses', 'attendees_link', 'attendee_responses',
+            'event_photos', 'comments', 'representative', 'email', 'modality', 'meeting_link',
+            'location', 'year'
+        ]);
 
-        return redirect()->route('workshops.index')->with('message', 'Taller actualizado exitosamente.');
+        $data['year'] = $data['year'] ?: date('Y');
+
+        $workshop->update($data);
+
+        return response()->json(['message' => 'Taller actualizado exitosamente.']);
     }
 
     public function destroy(Workshop $workshop)

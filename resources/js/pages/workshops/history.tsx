@@ -4,11 +4,22 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, Search, Copy, Eye, MoreHorizontal, User } from 'lucide-react';
+import { Calendar, Search, Copy, Eye, MoreHorizontal, User, Trash2 } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
 import { useState } from 'react';
 import { router } from '@inertiajs/react';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 interface Workshop {
     id: number;
@@ -36,10 +47,21 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function History({ workshops = [], filters }: Props) {
     const [search, setSearch] = useState(filters.search || '');
+    const [deleteId, setDeleteId] = useState<number | null>(null);
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
         router.get('/workshops/history', { search }, { preserveState: true });
+    };
+
+    const handleDelete = (id: number) => {
+        if (confirm('¿Estás seguro de eliminar este taller?')) {
+            router.delete(`/workshops/${id}`, {
+                onSuccess: () => {
+                    // Recargar la página
+                }
+            });
+        }
     };
 
     const getModalityBadge = (modality: string) => {
@@ -121,6 +143,15 @@ export default function History({ workshops = [], filters }: Props) {
                                                     <Copy className="h-3.5 w-3.5" />
                                                     Duplicar
                                                 </Link>
+                                            </Button>
+                                            <Button 
+                                                variant="ghost" 
+                                                size="icon" 
+                                                title="Eliminar"
+                                                className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                                onClick={() => handleDelete(workshop.id)}
+                                            >
+                                                <Trash2 className="h-4 w-4" />
                                             </Button>
                                         </div>
                                     </TableCell>

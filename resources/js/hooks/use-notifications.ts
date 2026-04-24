@@ -15,16 +15,30 @@ export function useNotifications() {
     }, []);
 
     const sendNotification = useCallback((title: string, body: string) => {
-        if (!('Notification' in window) || Notification.permission !== 'granted') {
-            // Si no hay permiso, pedimos de nuevo silenciosamente para la próxima
-            Notification.requestPermission();
+        console.log('Intentando enviar notificación:', title, body);
+        console.log('Permission:', Notification?.permission);
+        
+        if (!('Notification' in window)) {
+            console.log('Navegador no soporta notificaciones');
             return;
         }
-
-        new Notification(title, {
-            body,
-            icon: '/favicon.ico', // Puedes cambiar esto por el logo de la UCV
-        });
+        
+        if (Notification.permission === 'granted') {
+            console.log('Enviando notificación...');
+            new Notification(title, {
+                body,
+                icon: '/favicon.ico',
+            });
+        } else if (Notification.permission === 'default') {
+            console.log('Pidiendo permiso...');
+            Notification.requestPermission().then(permission => {
+                if (permission === 'granted') {
+                    new Notification(title, { body, icon: '/favicon.ico' });
+                }
+            });
+        } else {
+            console.log('Permiso denegado');
+        }
     }, []);
 
     return { requestPermission, sendNotification };

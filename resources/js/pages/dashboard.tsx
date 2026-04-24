@@ -3,7 +3,7 @@ import { SectionCards } from '@/components/section-cards';
 import { ChartAreaInteractive } from '@/components/dashboard-chart';
 import { DashboardActions } from '@/components/dashboard-actions';
 
-export default function Dashboard({ stats }: { stats: any }) {
+export default function Dashboard({ stats, charts }: { stats: any, charts?: any }) {
     return (
         <>
             <Head title="Dashboard" />

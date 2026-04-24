@@ -26,12 +26,29 @@ export default function Create({ users, duplicateFrom }: Props) {
         title: duplicateFrom?.title || '',
         shift_date: urlParams.get('shift_date') || '',
         shift_type: urlParams.get('shift_type') || duplicateFrom?.shift_type || '',
+        shift_time: duplicateFrom?.shift_time || '',
         representative: duplicateFrom?.representative || '',
         email: duplicateFrom?.email || '',
         modality: duplicateFrom?.modality || '',
         year: duplicateFrom?.year || new Date().getFullYear(),
         meeting_link: duplicateFrom?.meeting_link || '',
         location: duplicateFrom?.location || '',
+        brand: duplicateFrom?.brand || '',
+        contact_name: duplicateFrom?.contact_name || '',
+        contact_position: duplicateFrom?.contact_position || '',
+        contact_email_b: duplicateFrom?.contact_email_b || '',
+        contact_email_n: duplicateFrom?.contact_email_n || '',
+        contact_phone: duplicateFrom?.contact_phone || '',
+        speaker: duplicateFrom?.speaker || '',
+        speaker_linkedin: duplicateFrom?.speaker_linkedin || '',
+        drive_logo_photo: duplicateFrom?.drive_logo_photo || '',
+        drive_difusion: duplicateFrom?.drive_difusion || '',
+        inscription_link: duplicateFrom?.inscription_link || '',
+        inscription_responses: duplicateFrom?.inscription_responses || '',
+        attendees_link: duplicateFrom?.attendees_link || '',
+        attendee_responses: duplicateFrom?.attendee_responses || '',
+        event_photos: duplicateFrom?.event_photos || '',
+        comments: duplicateFrom?.comments || '',
     });
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -195,18 +212,246 @@ export default function Create({ users, duplicateFrom }: Props) {
                                 </div>
                             )}
 
-                            {data.modality === 'presencial' && (
+{data.modality === 'presencial' && (
                                 <div className="space-y-2">
                                     <Label htmlFor="location">Ubicación / Aula</Label>
                                     <Input
                                         id="location"
                                         value={data.location}
                                         onChange={(e) => setData('location', e.target.value)}
-                                        placeholder="Ej: Auditorio A, Aula 302..."
+                                        placeholder="Ej: Auditorium A, Aula 302..."
                                     />
                                     {errors.location && <p className="text-xs font-medium text-destructive">{errors.location}</p>}
                                 </div>
                             )}
+
+                            <div className="separator my-2 border-t" />
+
+                            <CardHeader className="border-b bg-muted/10 -mx-6 -mt-6 px-6 py-3">
+                                <CardTitle className="text-lg">Datos del Ponente</CardTitle>
+                            </CardHeader>
+
+                            <div className="grid gap-4 sm:grid-cols-2 pt-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="speaker">Nombre del Ponente</Label>
+                                    <Input
+                                        id="speaker"
+                                        value={data.speaker}
+                                        onChange={(e) => setData('speaker', e.target.value)}
+                                        placeholder="Nombre completo"
+                                    />
+                                    {errors.speaker && <p className="text-xs font-medium text-destructive">{errors.speaker}</p>}
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="speaker_linkedin">Perfil LinkedIn</Label>
+                                    <Input
+                                        id="speaker_linkedin"
+                                        value={data.speaker_linkedin}
+                                        onChange={(e) => setData('speaker_linkedin', e.target.value)}
+                                        placeholder="https://linkedin.com/in/..."
+                                    />
+                                    {errors.speaker_linkedin && <p className="text-xs font-medium text-destructive">{errors.speaker_linkedin}</p>}
+                                </div>
+                            </div>
+
+                            <div className="grid gap-4 sm:grid-cols-2 pt-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="brand">Marca / Empresa</Label>
+                                    <Input
+                                        id="brand"
+                                        value={data.brand}
+                                        onChange={(e) => setData('brand', e.target.value)}
+                                        placeholder="Empresa o marca"
+                                    />
+                                    {errors.brand && <p className="text-xs font-medium text-destructive">{errors.brand}</p>}
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="shift_time">Hora del Taller</Label>
+                                    <Input
+                                        id="shift_time"
+                                        type="time"
+                                        value={data.shift_time}
+                                        onChange={(e) => setData('shift_time', e.target.value)}
+                                    />
+                                    {errors.shift_time && <p className="text-xs font-medium text-destructive">{errors.shift_time}</p>}
+                                </div>
+                            </div>
+
+                            <div className="separator my-2 border-t" />
+
+                            <CardHeader className="border-b bg-muted/10 -mx-6 px-6 py-3">
+                                <CardTitle className="text-lg">Datos de Contacto</CardTitle>
+                            </CardHeader>
+
+                            <div className="grid gap-4 sm:grid-cols-2 pt-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="contact_name">Nombre de Contacto</Label>
+                                    <Input
+                                        id="contact_name"
+                                        value={data.contact_name}
+                                        onChange={(e) => setData('contact_name', e.target.value)}
+                                        placeholder="Nombre completo"
+                                    />
+                                    {errors.contact_name && <p className="text-xs font-medium text-destructive">{errors.contact_name}</p>}
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="contact_position">Cargo</Label>
+                                    <Input
+                                        id="contact_position"
+                                        value={data.contact_position}
+                                        onChange={(e) => setData('contact_position', e.target.value)}
+                                        placeholder="Cargo o posición"
+                                    />
+                                    {errors.contact_position && <p className="text-xs font-medium text-destructive">{errors.contact_position}</p>}
+                                </div>
+                            </div>
+
+                            <div className="grid gap-4 sm:grid-cols-2 pt-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="contact_email_b">Correo Bisnis</Label>
+                                    <Input
+                                        id="contact_email_b"
+                                        type="email"
+                                        value={data.contact_email_b}
+                                        onChange={(e) => setData('contact_email_b', e.target.value)}
+                                        placeholder="correo@empresa.com"
+                                    />
+                                    {errors.contact_email_b && <p className="text-xs font-medium text-destructive">{errors.contact_email_b}</p>}
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="contact_email_n">Correo Personal</Label>
+                                    <Input
+                                        id="contact_email_n"
+                                        type="email"
+                                        value={data.contact_email_n}
+                                        onChange={(e) => setData('contact_email_n', e.target.value)}
+                                        placeholder="correo@personal.com"
+                                    />
+                                    {errors.contact_email_n && <p className="text-xs font-medium text-destructive">{errors.contact_email_n}</p>}
+                                </div>
+                            </div>
+
+                            <div className="space-y-2 pt-4">
+                                <Label htmlFor="contact_phone">Teléfono</Label>
+                                <Input
+                                    id="contact_phone"
+                                    value={data.contact_phone}
+                                    onChange={(e) => setData('contact_phone', e.target.value)}
+                                    placeholder="+51 999 999 999"
+                                />
+                                {errors.contact_phone && <p className="text-xs font-medium text-destructive">{errors.contact_phone}</p>}
+                            </div>
+
+                            <div className="separator my-2 border-t" />
+
+                            <CardHeader className="border-b bg-muted/10 -mx-6 px-6 py-3">
+                                <CardTitle className="text-lg">Recursos</CardTitle>
+                            </CardHeader>
+
+                            <div className="grid gap-4 sm:grid-cols-2 pt-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="drive_logo_photo">Drive Logo/Foto</Label>
+                                    <Input
+                                        id="drive_logo_photo"
+                                        value={data.drive_logo_photo}
+                                        onChange={(e) => setData('drive_logo_photo', e.target.value)}
+                                        placeholder="Enlace Drive"
+                                    />
+                                    {errors.drive_logo_photo && <p className="text-xs font-medium text-destructive">{errors.drive_logo_photo}</p>}
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="drive_difusion">Drive Difusión</Label>
+                                    <Input
+                                        id="drive_difusion"
+                                        value={data.drive_difusion}
+                                        onChange={(e) => setData('drive_difusion', e.target.value)}
+                                        placeholder="Enlace Drive"
+                                    />
+                                    {errors.drive_difusion && <p className="text-xs font-medium text-destructive">{errors.drive_difusion}</p>}
+                                </div>
+                            </div>
+
+                            <div className="separator my-2 border-t" />
+
+                            <CardHeader className="border-b bg-muted/10 -mx-6 px-6 py-3">
+                                <CardTitle className="text-lg">Inscripción y Asistencia</CardTitle>
+                            </CardHeader>
+
+                            <div className="grid gap-4 sm:grid-cols-2 pt-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="inscription_link">Enlace de Inscripción</Label>
+                                    <Input
+                                        id="inscription_link"
+                                        value={data.inscription_link}
+                                        onChange={(e) => setData('inscription_link', e.target.value)}
+                                        placeholder="https://..."
+                                    />
+                                    {errors.inscription_link && <p className="text-xs font-medium text-destructive">{errors.inscription_link}</p>}
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="inscription_responses">Inscripción - Respuestas</Label>
+                                    <Input
+                                        id="inscription_responses"
+                                        value={data.inscription_responses}
+                                        onChange={(e) => setData('inscription_responses', e.target.value)}
+                                        placeholder="Enlace Drive"
+                                    />
+                                    {errors.inscription_responses && <p className="text-xs font-medium text-destructive">{errors.inscription_responses}</p>}
+                                </div>
+                            </div>
+
+                            <div className="grid gap-4 sm:grid-cols-2 pt-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="attendees_link">Enlace de Asistencia</Label>
+                                    <Input
+                                        id="attendees_link"
+                                        value={data.attendees_link}
+                                        onChange={(e) => setData('attendees_link', e.target.value)}
+                                        placeholder="https://..."
+                                    />
+                                    {errors.attendees_link && <p className="text-xs font-medium text-destructive">{errors.attendees_link}</p>}
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="attendee_responses">Asistencia - Respuestas</Label>
+                                    <Input
+                                        id="attendee_responses"
+                                        value={data.attendee_responses}
+                                        onChange={(e) => setData('attendee_responses', e.target.value)}
+                                        placeholder="Enlace Drive"
+                                    />
+                                    {errors.attendee_responses && <p className="text-xs font-medium text-destructive">{errors.attendee_responses}</p>}
+                                </div>
+                            </div>
+
+                            <div className="space-y-2 pt-4">
+                                <Label htmlFor="event_photos">Fotos del Evento</Label>
+                                <Input
+                                    id="event_photos"
+                                    value={data.event_photos}
+                                    onChange={(e) => setData('event_photos', e.target.value)}
+                                    placeholder="Enlace Drive"
+                                />
+                                {errors.event_photos && <p className="text-xs font-medium text-destructive">{errors.event_photos}</p>}
+                            </div>
+
+                            <div className="space-y-2 pt-4">
+                                <Label htmlFor="comments">Comentarios</Label>
+                                <textarea
+                                    id="comments"
+                                    value={data.comments}
+                                    onChange={(e) => setData('comments', e.target.value)}
+                                    placeholder="Observaciones adicionales..."
+                                    className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                />
+                                {errors.comments && <p className="text-xs font-medium text-destructive">{errors.comments}</p>}
+                            </div>
 
                             <div className="flex items-center justify-end gap-3 pt-4 border-t mt-4">
                                 <Button variant="ghost" asChild>

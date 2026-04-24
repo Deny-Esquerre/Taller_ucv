@@ -26,6 +26,8 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
+export const description = "An interactive area chart"
+
 const chartData = [
   { date: "2024-04-01", desktop: 222, mobile: 150 },
   { date: "2024-04-02", desktop: 97, mobile: 180 },
@@ -125,12 +127,12 @@ const chartConfig = {
     label: "Visitors",
   },
   desktop: {
-    label: "Escritorio",
+    label: "Desktop",
     color: "var(--chart-1)",
   },
   mobile: {
-    label: "Móvil",
-    color: "var(--muted-foreground)",
+    label: "Mobile",
+    color: "var(--chart-2)",
   },
 } satisfies ChartConfig
 
@@ -152,12 +154,12 @@ export function ChartAreaInteractive() {
   })
 
   return (
-    <Card className="border-none shadow-sm">
-      <CardHeader className="flex items-center gap-2 space-y-0 border-b border-border/50 py-5 sm:flex-row">
+    <Card className="pt-0">
+      <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row">
         <div className="grid flex-1 gap-1">
-          <CardTitle className="text-base font-semibold">Actividad del Sistema</CardTitle>
+          <CardTitle>Area Chart - Interactive</CardTitle>
           <CardDescription>
-            Visualización de interacciones en los últimos 3 meses
+            Showing total visitors for the last 3 months
           </CardDescription>
         </div>
         <Select value={timeRange} onValueChange={setTimeRange}>
@@ -169,22 +171,21 @@ export function ChartAreaInteractive() {
           </SelectTrigger>
           <SelectContent className="rounded-xl">
             <SelectItem value="90d" className="rounded-lg">
-              Últimos 3 meses
+              Last 3 months
             </SelectItem>
             <SelectItem value="30d" className="rounded-lg">
-              Últimos 30 días
+              Last 30 days
             </SelectItem>
             <SelectItem value="7d" className="rounded-lg">
-              Últimos 7 días
+              Last 7 days
             </SelectItem>
           </SelectContent>
         </Select>
       </CardHeader>
-      <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
+      <CardContent className="px-4 pt-4 sm:px-6 sm:pt-6">
         <ChartContainer
           config={chartConfig}
-          className="w-full"
-          style={{ height: "300px", minHeight: "300px" }}
+          style={{ width: "100%", height: "280px" }}
         >
           <AreaChart data={filteredData}>
             <defs>
@@ -213,7 +214,7 @@ export function ChartAreaInteractive() {
                 />
               </linearGradient>
             </defs>
-            <CartesianGrid vertical={false} strokeDasharray="3 3" className="stroke-muted-foreground/10" />
+            <CartesianGrid vertical={false} />
             <XAxis
               dataKey="date"
               tickLine={false}
@@ -222,7 +223,7 @@ export function ChartAreaInteractive() {
               minTickGap={32}
               tickFormatter={(value) => {
                 const date = new Date(value)
-                return date.toLocaleDateString("es-ES", {
+                return date.toLocaleDateString("en-US", {
                   month: "short",
                   day: "numeric",
                 })
@@ -233,10 +234,9 @@ export function ChartAreaInteractive() {
               content={
                 <ChartTooltipContent
                   labelFormatter={(value) => {
-                    return new Date(value).toLocaleDateString("es-ES", {
+                    return new Date(value).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
-                      year: "numeric"
                     })
                   }}
                   indicator="dot"

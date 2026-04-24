@@ -102,14 +102,17 @@ export default function WorkshopManage({ allBlocked = [] }: Props) {
     const renderCalendarDays = () => {
         const days = [];
         for (let i = 0; i < firstDayOfMonth; i++) {
-            days.push(<div key={`pad-${i}`} className="h-12 sm:h-20 border border-border/30 bg-muted/5" />);
+            days.push(<div key={`pad-${i}`} className="h-12 sm:h-20 border border-border bg-muted/5" />);
         }
 
         for (let d = 1; d <= daysInMonth; d++) {
+            const date = new Date(year, month, d);
             const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
             const info = getDayInfo(dateStr);
+            const dayNames = ['DOMINGO', 'LUNES', 'MARTES', 'MIÉRCOLES', 'JUEVES', 'VIERNES', 'SÁBADO'];
+            const dayName = dayNames[date.getDay()];
             
-            // Estado visual: bloqueado si es fin de semana y NO está habilitado, o si existe registro y NO está habilitado
+            const isWeekend = date.getDay() === 0 || date.getDay() === 6;
             const isBlocked = (info.is_weekend && !info.is_enabled) || (info.exists && !info.is_enabled);
             const isEnabled = info.is_enabled;
 
@@ -119,21 +122,28 @@ export default function WorkshopManage({ allBlocked = [] }: Props) {
                     type="button"
                     onClick={() => handleDayClick(dateStr)}
                     className={cn(
-                        "relative h-12 sm:h-20 border border-border/40 p-1 transition-all flex flex-col items-center justify-center gap-1 group",
-                        isBlocked && "bg-red-500/[0.03] hover:bg-red-500/[0.06]",
+                        "relative h-16 sm:h-20 border border-border p-1 transition-all flex flex-col items-center justify-center gap-0.5 group",
+                        isBlocked && "bg-red-500/10 hover:bg-red-500/20 border-red-400 dark:border-red-700",
                         isEnabled && "bg-green-500/[0.03] hover:bg-green-500/[0.06]",
-                        !isBlocked && !isEnabled && "bg-background hover:bg-muted/30"
+                        !isBlocked && !isEnabled && isWeekend && "bg-red-500/5 hover:bg-red-500/10",
+                        !isBlocked && !isEnabled && !isWeekend && "bg-background hover:bg-muted/30"
                     )}
                 >
                     <span className={cn(
-                        "text-[10px] font-bold",
-                        isBlocked ? "text-red-500/60" : isEnabled ? "text-green-600/60" : "text-muted-foreground/50"
+                        "text-[12px] sm:text-sm font-extrabold",
+                        isBlocked ? "text-red-600 dark:text-red-400" : isEnabled ? "text-green-600/60" : isWeekend ? "text-red-400/60" : "text-muted-foreground/60"
                     )}>
                         {d}
                     </span>
+                    <span className={cn(
+                        "text-[13px] sm:text-[14px] font-black uppercase tracking-wide",
+                        isBlocked ? "text-red-500/80" : isEnabled ? "text-green-600/60" : isWeekend ? "text-red-400/50" : "text-muted-foreground/40"
+                    )}>
+                        {dayName}
+                    </span>
                     
-                    {isBlocked && <Lock className="h-3 w-3 text-red-500/30 group-hover:scale-110 transition-transform" />}
-                    {isEnabled && <Unlock className="h-3 w-3 text-green-500/30 group-hover:scale-110 transition-transform" />}
+                    {isBlocked && <Lock className="h-2.5 w-2.5 text-red-500 dark:text-red-400" />}
+                    {isEnabled && <Unlock className="h-2.5 w-2.5 text-green-500/50" />}
                 </button>
             );
         }
@@ -192,10 +202,10 @@ export default function WorkshopManage({ allBlocked = [] }: Props) {
                             </div>
                         </div>
                         
-                        <div className="grid grid-cols-7 border-b border-border/30 bg-muted/5 text-center">
-                            {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((day, idx) => (
-                                <div key={idx} className="py-2 border-r border-border/30 last:border-0">
-                                    <span className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest">{day}</span>
+                        <div className="grid grid-cols-7 border-b-2 border-border bg-muted/5 text-center">
+                            {['LUNES', 'MARTES', 'MIÉRCOLES', 'JUEVES', 'VIERNES', 'SÁBADO', 'DOMINGO'].map((day, idx) => (
+                                <div key={idx} className="py-2 border-r-2 border-border last:border-0">
+                                    <span className="text-[8px] font-black text-muted-foreground/50 uppercase tracking-widest">{day}</span>
                                 </div>
                             ))}
                         </div>

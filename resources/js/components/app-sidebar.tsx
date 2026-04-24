@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { Calendar, LayoutGrid, Users, Lock } from 'lucide-react';
+import { Calendar, LayoutGrid, Users, Lock, Settings, BookOpen } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
@@ -18,7 +18,7 @@ import type { NavItem } from '@/types';
 
 export function AppSidebar() {
     const { auth } = usePage().props as any;
-    const userRole = auth.user?.role;
+    const userRole = auth.user?.role || 'user';
 
     const mainNavItems: NavItem[] = [
         {
@@ -39,30 +39,26 @@ export function AppSidebar() {
                     title: 'Historial',
                     href: '/workshops/history',
                 },
-                ...(userRole === 'admin' ? [
-                    {
-                        title: 'Gestión Avanzada',
-                        href: '/workshops/manage',
-                    }
-                ] : [])
+                {
+                    title: 'Gestión Avanzada',
+                    href: '/workshops/manage',
+                },
             ]
         },
     ];
 
-    const adminNavItems: NavItem[] = [];
-
-    if (userRole === 'admin') {
-        adminNavItems.push({
+    const adminNavItems: NavItem[] = [
+        {
             title: 'Gestión de Usuarios',
             href: '/users',
             icon: Users,
-        });
-        adminNavItems.push({
+        },
+        {
             title: 'Gestión de Permisos',
             href: '/permissions',
             icon: Lock,
-        });
-    }
+        },
+    ];
 
     return (
         <Sidebar collapsible="icon" variant="inset">
@@ -80,12 +76,7 @@ export function AppSidebar() {
 
             <SidebarContent>
                 <NavMain items={mainNavItems} title="Plataforma" />
-
-                {adminNavItems.length > 0 && (
-                    <div className="mt-4">
-                        <NavMain items={adminNavItems} title="Configuración Administrador" />
-                    </div>
-                )}
+                <NavMain items={adminNavItems} title="Administración" />
             </SidebarContent>
             <SidebarFooter>
                 <NavUser />

@@ -5,7 +5,7 @@ import { Link } from "@inertiajs/react"
 
 export function DashboardActions() {
   return (
-    <div className="px-4 lg:px-6">
+    <div className="px-4">
       <Card className="p-4 border border-border/40 shadow-xs bg-card flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="text-left">
           <h3 className="text-sm font-semibold text-foreground leading-none mb-1.5">Acciones y Reportes</h3>
