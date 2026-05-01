@@ -19,7 +19,7 @@ export default function Dashboard({ stats, charts }: { stats: any, charts?: any 
                 
                 <DashboardActions />
                 
-                <ChartAreaInteractive />
+                <ChartAreaInteractive data={charts?.interactive || []} />
             </div>
         </>
     );

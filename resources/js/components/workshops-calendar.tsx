@@ -299,14 +299,22 @@ const handleEditWorkshop = (workshop: Workshop) => {
                 : 'la fecha seleccionada';
 
             console.log('Enviando notificación...', authUser.name, formData.title);
-            sendNotification(
-                'Taller Registrado',
-                `${authUser.name} agregó el taller "${formData.title}" para el día ${formattedDate}`
-            );
-            
-            setIsDialogOpen(false);
-            reset();
-            window.location.reload();
+            try {
+                sendNotification(
+                    'Taller Registrado',
+                    `${authUser.name} agregó el taller "${formData.title}" para el día ${formattedDate}`
+                );
+                setTimeout(() => {
+                    setIsDialogOpen(false);
+                    reset();
+                    window.location.reload();
+                }, 2000);
+            } catch (e) {
+                setIsDialogOpen(false);
+                reset();
+                window.location.reload();
+            }
+            return;
         })
         .catch(err => {
             console.error('Error:', err);

@@ -11,9 +11,9 @@ const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
     resolve: (name) => {
-        const pages = import.meta.glob('./pages/**/*.tsx', { eager: true });
-
-        return pages[`./pages/${name}.tsx`];
+        const pages = import.meta.glob('./pages/**/*.tsx', { eager: true }) as Record<string, any>;
+        const page = pages[`./pages/${name}.tsx`];
+        return page;
     },
     layout: (name) => {
         switch (true) {
@@ -37,7 +37,7 @@ createInertiaApp({
         );
     },
     progress: {
-        color: '#4B5563',
+        color: '#DC2626',
     },
 });
 

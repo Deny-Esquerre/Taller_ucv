@@ -29,33 +29,23 @@ class DashboardController extends Controller
 
         // 3. Días habilitados manualmente
         $enabledDaysCount = BlockedDay::where('is_enabled', true)->count();
-        $totalBlockedOrEnabled = BlockedDay::count();
 
-        // 4. Datos para el gráfico - talleres por mes
-        $workshopsByMonth = Workshop::select(
-            DB::raw("TO_CHAR(shift_date, 'YYYY-MM') as month"),
-            DB::raw('COUNT(*) as total')
+        // 4. Datos para el gráfico interactivo (Programados vs Terminados)
+        $interactiveChartData = Workshop::select(
+            DB::raw("TO_CHAR(shift_date, 'YYYY-MM-DD') as date"),
+            DB::raw("SUM(CASE WHEN status = 'scheduled' THEN 1 ELSE 0 END) as programados"),
+            DB::raw("SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as terminados")
         )
+        ->where('shift_date', '>=', $now->copy()->subMonths(6))
         ->whereNotNull('shift_date')
-        ->groupBy('month')
-        ->orderBy('month')
+        ->groupBy('date')
+        ->orderBy('date')
         ->get();
 
-        // 5. Talleres por turno
+        // 5. Talleres por turno (Resumen)
         $workshopsByShift = Workshop::select('shift_type', DB::raw('COUNT(*) as total'))
             ->groupBy('shift_type')
             ->get();
-
-        // 6. Talleres por mes (últimos 12 meses)
-        $workshopsLast12Months = Workshop::select(
-            DB::raw("TO_CHAR(shift_date, 'YYYY-MM') as month"),
-            DB::raw('COUNT(*) as total')
-        )
-        ->where('shift_date', '>=', $now->copy()->subMonths(12)->startOfMonth())
-        ->whereNotNull('shift_date')
-        ->groupBy('month')
-        ->orderBy('month')
-        ->get();
 
         return Inertia::render('dashboard', [
             'stats' => [
@@ -72,9 +62,8 @@ class DashboardController extends Controller
                 ]
             ],
             'charts' => [
-                'by_month' => $workshopsByMonth,
+                'interactive' => $interactiveChartData,
                 'by_shift' => $workshopsByShift,
-                'last_12_months' => $workshopsLast12Months,
             ]
         ]);
     }
