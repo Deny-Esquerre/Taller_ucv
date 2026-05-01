@@ -8,9 +8,9 @@ export default function Dashboard({ stats, charts }: { stats: any, charts?: any 
         <>
             <Head title="Dashboard" />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <div className="space-y-1">
-                    <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
-                    <p className="text-muted-foreground">
+                <div className="space-y-1 mb-4">
+                    <h1 className="text-xl font-bold tracking-tight text-foreground">Dashboard</h1>
+                    <p className="text-sm text-muted-foreground">
                         Bienvenido al sistema de gestión de talleres UCV
                     </p>
                 </div>

@@ -1,9 +1,9 @@
 import { Link, usePage } from '@inertiajs/react';
-import { ChevronLeft, ChevronRight, HelpCircle, Mail, Phone, Clock, MessageCircle, Info } from 'lucide-react';
+import { ChevronLeft, ChevronRight, HelpCircle, Mail, Phone, Clock, MessageCircle, Info, Sparkles, ExternalLink, Headset } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { home } from '@/routes';
 import type { AuthLayoutProps } from '@/types';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const carouselItems = [
     {
@@ -24,9 +24,9 @@ const carouselItems = [
 ];
 
 const infoMessages = [
-    "Gestiona tus talleres con un solo clic.",
-    "Portal optimizado para la administración educativa.",
-    "Control total sobre la programación académica."
+    "Optimiza la gestión académica con procesos automatizados y eficientes.",
+    "Visualiza métricas de rendimiento en tiempo real para una gestión basada en datos.",
+    "Garantiza la integridad y el control total sobre la programación de talleres."
 ];
 
 export default function AuthSplitLayout({
@@ -37,13 +37,34 @@ export default function AuthSplitLayout({
     const { name } = usePage().props;
     const [currentImage, setCurrentImage] = useState(0);
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+    const containerRef = useRef<HTMLDivElement>(null);
 
     const handleMouseMove = (e: React.MouseEvent) => {
-        const rect = e.currentTarget.getBoundingClientRect();
-        setMousePos({
-            x: e.clientX - rect.left,
-            y: e.clientY - rect.top,
-        });
+        if (!containerRef.current) return;
+        
+        const rect = containerRef.current.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const tooltipWidth = 280;
+        const tooltipHeight = 85;
+        const margin = 20;
+
+        let posX = x + margin;
+        let posY = y + margin;
+
+        if (x + tooltipWidth + margin > rect.width) {
+            posX = x - tooltipWidth - margin;
+        }
+
+        if (y + tooltipHeight + margin > rect.height) {
+            posY = y - tooltipHeight - margin;
+        }
+
+        posX = Math.max(margin, Math.min(posX, rect.width - tooltipWidth - margin));
+        posY = Math.max(margin, Math.min(posY, rect.height - tooltipHeight - margin));
+
+        setMousePos({ x: posX, y: posY });
     };
 
     useEffect(() => {
@@ -65,6 +86,7 @@ export default function AuthSplitLayout({
         <div className="relative grid h-dvh flex-col items-center justify-center lg:max-w-none lg:grid-cols-2">
             <div className="relative hidden h-full flex-col lg:flex p-6 pr-0">
                 <div 
+                    ref={containerRef}
                     onMouseMove={handleMouseMove}
                     className="group relative flex h-full w-full flex-col overflow-hidden rounded-[2rem] bg-black p-10 text-white shadow-2xl"
                 >
@@ -90,22 +112,24 @@ export default function AuthSplitLayout({
                         className="absolute inset-0 z-20 h-full w-full object-cover opacity-100 pointer-events-none" 
                     />
 
-                    {/* Interactive Info Bubble that follows the Mouse */}
+                    {/* Interactive Info Bubble */}
                     <div 
-                        className="absolute z-40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap"
+                        className="absolute z-40 opacity-0 group-hover:opacity-100 transition-[opacity,transform] duration-500 pointer-events-none whitespace-nowrap ease-out"
                         style={{ 
                             left: `${mousePos.x}px`, 
-                            top: `${mousePos.y}px`,
-                            transform: 'translate(15px, 15px)' // Offset from cursor
+                            top: `${mousePos.y}px`
                         }}
                     >
-                        <div className="flex items-center gap-3 bg-[rgb(35,53,89)]/40 backdrop-blur-md border border-white/20 px-4 py-2.5 rounded-xl shadow-2xl ring-1 ring-white/10">
-                            <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[rgb(220,38,38)] shadow-lg shadow-red-500/20">
-                                <Info className="size-4 text-white" />
+                        <div className="flex w-[280px] items-center gap-3 bg-white/10 backdrop-blur-xl border border-white/30 px-5 py-3 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] ring-1 ring-white/20">
+                            <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[rgb(220,38,38)] to-red-600 shadow-lg shadow-red-500/40">
+                                <Sparkles className="size-4.5 text-white animate-pulse" />
                             </div>
                             <div className="flex flex-col">
-                                <span className="text-[10px] font-bold text-white tracking-tight uppercase leading-none mb-0.5">Tip Informativo</span>
-                                <span className="text-[11px] text-white/90 leading-tight">
+                                <div className="flex items-center gap-1.5 mb-0.5">
+                                    <span className="text-[11px] font-black text-white tracking-widest uppercase leading-none">UCV Insight</span>
+                                    <div className="size-1 rounded-full bg-red-500 animate-ping" />
+                                </div>
+                                <span className="text-[12px] font-medium text-white/95 leading-snug whitespace-normal">
                                     {infoMessages[currentImage]}
                                 </span>
                             </div>
@@ -187,52 +211,83 @@ export default function AuthSplitLayout({
                     {children}
                 </div>
 
-                {/* Help Modal */}
+                {/* Help Modal - Professional Redesign */}
                 <Dialog>
                     <DialogTrigger asChild>
-                        <button className="absolute bottom-6 right-6 flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground focus:outline-none sm:bottom-8 sm:right-8">
-                            <HelpCircle className="size-4" />
+                        <button className="absolute bottom-6 right-6 flex items-center gap-2.5 rounded-full bg-white px-4 py-2 text-sm font-semibold text-neutral-600 shadow-lg ring-1 ring-neutral-200 transition-all hover:bg-neutral-50 hover:text-[rgb(220,38,38)] hover:shadow-xl focus:outline-none sm:bottom-8 sm:right-8">
+                            <HelpCircle className="size-4.5" />
                             ¿Necesitas Ayuda?
                         </button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-md">
-                        <DialogHeader>
-                            <DialogTitle className="text-xl">¿Problema con tu usuario y contraseña?</DialogTitle>
-                            <DialogDescription className="text-base mt-2">
-                                Comunícate con nuestra área de Soporte para que podamos ayudarte.
-                            </DialogDescription>
-                        </DialogHeader>
+                    <DialogContent className="sm:max-w-[440px] p-0 overflow-hidden border-none rounded-[1.5rem] shadow-2xl">
+                        <div className="bg-[rgb(35,53,89)] p-8 text-white">
+                            <div className="flex items-center gap-4 mb-4">
+                                <div className="flex size-12 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md ring-1 ring-white/20">
+                                    <Headset className="size-6 text-white" />
+                                </div>
+                                <div className="flex flex-col">
+                                    <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/50">Centro de Soporte</span>
+                                    <h2 className="text-xl font-bold">¿Problemas de acceso?</h2>
+                                </div>
+                            </div>
+                            <p className="text-sm text-white/70 leading-relaxed">
+                                Nuestro equipo de soporte técnico está disponible para ayudarte a recuperar tu cuenta o resolver dudas del sistema.
+                            </p>
+                        </div>
                         
-                        <div className="grid gap-5 py-4 text-sm text-foreground/90">
-                            <div className="flex flex-col gap-1">
-                                <div className="flex items-center gap-2 font-semibold text-foreground">
-                                    <Mail className="size-4 text-muted-foreground" /> Escríbenos a:
+                        <div className="grid gap-3 p-6 bg-white dark:bg-neutral-950">
+                            {/* Contact Card: Email */}
+                            <div className="flex items-center gap-4 p-4 rounded-xl bg-neutral-50 dark:bg-neutral-900 ring-1 ring-neutral-200 dark:ring-neutral-800 transition-colors hover:bg-white dark:hover:bg-neutral-800">
+                                <div className="flex size-10 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-950/30 text-blue-600">
+                                    <Mail className="size-5" />
                                 </div>
-                                <span className="pl-6">denyesquerre293@gmail.com</span>
-                            </div>
-                            
-                            <div className="flex flex-col gap-1">
-                                <div className="flex items-center gap-2 font-semibold text-foreground">
-                                    <Phone className="size-4 text-muted-foreground" /> Comunícate con nosotros:
+                                <div className="flex flex-col">
+                                    <span className="text-[10px] font-bold uppercase text-neutral-400">Correo Electrónico</span>
+                                    <span className="text-sm font-semibold text-neutral-900 dark:text-white">denyesquerre293@gmail.com</span>
                                 </div>
-                                <span className="pl-6">+51 902397119</span>
                             </div>
 
-                            <div className="flex flex-col gap-1">
-                                <div className="flex items-center gap-2 font-semibold text-foreground">
-                                    <Clock className="size-4 text-muted-foreground" /> Horario de atención:
+                            {/* Contact Card: Phone */}
+                            <div className="flex items-center gap-4 p-4 rounded-xl bg-neutral-50 dark:bg-neutral-900 ring-1 ring-neutral-200 dark:ring-neutral-800 transition-colors hover:bg-white dark:hover:bg-neutral-800">
+                                <div className="flex size-10 items-center justify-center rounded-full bg-red-50 dark:bg-red-950/30 text-[rgb(220,38,38)]">
+                                    <Phone className="size-5" />
                                 </div>
-                                <span className="pl-6">Lunes a Sábado<br/>7:30 a.m - 10:00 p.m</span>
+                                <div className="flex flex-col">
+                                    <span className="text-[10px] font-bold uppercase text-neutral-400">Línea Directa</span>
+                                    <span className="text-sm font-semibold text-neutral-900 dark:text-white">+51 902397119</span>
+                                </div>
                             </div>
 
-                            <div className="flex flex-col gap-1">
-                                <div className="flex items-center gap-2 font-semibold text-foreground">
-                                    <MessageCircle className="size-4 text-green-600" /> WhatsApp:
+                            {/* Contact Card: Hours */}
+                            <div className="flex items-center gap-4 p-4 rounded-xl bg-neutral-50 dark:bg-neutral-900 ring-1 ring-neutral-200 dark:ring-neutral-800">
+                                <div className="flex size-10 items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-600">
+                                    <Clock className="size-5" />
                                 </div>
-                                <a href="https://wa.me/51902397119" target="_blank" rel="noreferrer" className="pl-6 font-medium text-blue-600 hover:underline">
-                                    +51 902397119
-                                </a>
+                                <div className="flex flex-col">
+                                    <span className="text-[10px] font-bold uppercase text-neutral-400">Horario de Atención</span>
+                                    <span className="text-sm font-semibold text-neutral-600 dark:text-neutral-300">Lun - Sáb (7:30 AM - 10:00 PM)</span>
+                                </div>
                             </div>
+
+                            {/* WhatsApp Button Action */}
+                            <a 
+                                href="https://wa.me/51902397119" 
+                                target="_blank" 
+                                rel="noreferrer"
+                                className="group mt-2 flex items-center justify-between gap-2 rounded-xl bg-[#25D366] px-5 py-4 text-white shadow-lg transition-all hover:bg-[#22c35e] hover:shadow-[#25D366]/20"
+                            >
+                                <div className="flex items-center gap-3">
+                                    <MessageCircle className="size-5 fill-white text-white" />
+                                    <div className="flex flex-col items-start leading-none">
+                                        <span className="text-[10px] font-bold uppercase opacity-80">Soporte Inmediato</span>
+                                        <span className="text-sm font-bold">Contactar vía WhatsApp</span>
+                                    </div>
+                                </div>
+                                <ExternalLink className="size-4 opacity-50 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                            </a>
+                        </div>
+                        <div className="p-4 bg-neutral-50 dark:bg-neutral-900 border-t border-neutral-100 dark:border-neutral-800 text-center">
+                            <p className="text-[10px] text-neutral-400 font-medium">© {new Date().getFullYear()} Plataforma de Talleres UCV - Soporte IT</p>
                         </div>
                     </DialogContent>
                 </Dialog>
@@ -240,4 +295,3 @@ export default function AuthSplitLayout({
         </div>
     );
 }
-

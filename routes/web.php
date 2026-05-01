@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
+use App\Http\Controllers\ExportController;
 use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
@@ -38,6 +39,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/workshops/history', [\App\Http\Controllers\WorkshopHistoryController::class, 'index'])->name('workshops.history');
     Route::get('/workshops/duplicate/{workshop}', [\App\Http\Controllers\WorkshopHistoryController::class, 'duplicate'])->name('workshops.duplicate');
     Route::resource('workshops', \App\Http\Controllers\WorkshopController::class);
+
+    // Exportaciones
+    Route::get('/export/pdf/workshops', [ExportController::class, 'exportWorkshopsPdf'])->name('export.workshops.pdf');
+    Route::get('/export/pdf/users', [ExportController::class, 'exportUsersPdf'])->name('export.users.pdf');
+    Route::get('/export/excel/workshops', [ExportController::class, 'exportWorkshopsExcel'])->name('export.workshops.excel');
+    Route::get('/export/excel/users', [ExportController::class, 'exportUsersExcel'])->name('export.users.excel');
 });
 
 require __DIR__.'/settings.php';
