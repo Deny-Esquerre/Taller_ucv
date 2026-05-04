@@ -243,7 +243,7 @@ export default function AuthSplitLayout({
                                 </div>
                                 <div className="flex flex-col">
                                     <span className="text-[10px] font-bold uppercase text-neutral-400">Correo Electrónico</span>
-                                    <span className="text-sm font-semibold text-neutral-900 dark:text-white">denyesquerre293@gmail.com</span>
+                                    <span className="text-sm font-semibold text-neutral-900 dark:text-white">aguilarbenja.98@gmail.com</span>
                                 </div>
                             </div>
 
@@ -254,7 +254,7 @@ export default function AuthSplitLayout({
                                 </div>
                                 <div className="flex flex-col">
                                     <span className="text-[10px] font-bold uppercase text-neutral-400">Línea Directa</span>
-                                    <span className="text-sm font-semibold text-neutral-900 dark:text-white">+51 902397119</span>
+                                    <span className="text-sm font-semibold text-neutral-900 dark:text-white">+51 983054134</span>
                                 </div>
                             </div>
 
@@ -271,7 +271,7 @@ export default function AuthSplitLayout({
 
                             {/* WhatsApp Button Action */}
                             <a 
-                                href="https://wa.me/51902397119" 
+                                href="https://wa.me/51983054134" 
                                 target="_blank" 
                                 rel="noreferrer"
                                 className="group mt-2 flex items-center justify-between gap-2 rounded-xl bg-[#25D366] px-5 py-4 text-white shadow-lg transition-all hover:bg-[#22c35e] hover:shadow-[#25D366]/20"
