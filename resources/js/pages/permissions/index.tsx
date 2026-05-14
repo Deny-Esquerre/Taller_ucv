@@ -88,7 +88,7 @@ export default function PermissionIndex({ permissions = {}, rolesWithPermissions
                         type="submit"
                         disabled={processing}
                         size="sm"
-                        className="h-9 px-5 font-medium shadow-sm rounded-md transition-all active:scale-95 bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
+                        className="h-9 px-5 font-medium shadow-sm rounded-md transition-all active:scale-95 bg-destructive text-white hover:bg-destructive/90"
                     >
                         <Save className={cn("mr-2 h-4 w-4", processing && "animate-spin")} />
                         {processing ? 'Guardando...' : 'Guardar cambios'}
