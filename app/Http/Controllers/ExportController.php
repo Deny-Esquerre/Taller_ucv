@@ -83,14 +83,17 @@ class ExportController extends Controller
         ]);
 
         // 3. Datos
+        $turnoMap  = ['morning' => 'Mañana', 'afternoon' => 'Tarde', 'night' => 'Noche'];
+        $estadoMap = ['scheduled' => 'Programado', 'completed' => 'Finalizado'];
+
         $row = 5;
         foreach ($workshops as $workshop) {
             $sheet->setCellValue('A' . $row, $workshop->title);
             $sheet->setCellValue('B' . $row, $workshop->speaker);
             $sheet->setCellValue('C' . $row, Carbon::parse($workshop->shift_date)->format('d/m/Y'));
-            $sheet->setCellValue('D' . $row, ucfirst($workshop->shift_type));
+            $sheet->setCellValue('D' . $row, $turnoMap[$workshop->shift_type]   ?? ucfirst($workshop->shift_type));
             $sheet->setCellValue('E' . $row, ucfirst($workshop->modality));
-            $sheet->setCellValue('F' . $row, ucfirst($workshop->status));
+            $sheet->setCellValue('F' . $row, $estadoMap[$workshop->status] ?? ucfirst($workshop->status));
 
             // Cebra (Zebra striping)
             if ($row % 2 == 0) {
@@ -159,7 +162,7 @@ class ExportController extends Controller
         foreach ($users as $user) {
             $sheet->setCellValue('A' . $row, $user->name);
             $sheet->setCellValue('B' . $row, $user->email);
-            $sheet->setCellValue('C' . $row, $user->is_admin ? 'Administrador' : 'Docente / Usuario');
+            $sheet->setCellValue('C' . $row, $user->role === 'admin' ? 'Administrador' : 'Practicante');
             $sheet->setCellValue('D' . $row, $user->created_at->format('d/m/Y H:i'));
 
             if ($row % 2 == 0) {

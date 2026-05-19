@@ -181,11 +181,11 @@
                     </td>
                     <td class="summary-item">
                         <div class="summary-label">Administradores</div>
-                        <div class="summary-value" style="color: #991b1b;">{{ $users->where('is_admin', true)->count() }}</div>
+                        <div class="summary-value" style="color: #991b1b;">{{ $users->where('role', 'admin')->count() }}</div>
                     </td>
                     <td class="summary-item">
-                        <div class="summary-label">Docentes</div>
-                        <div class="summary-value" style="color: #233559;">{{ $users->where('is_admin', false)->count() }}</div>
+                        <div class="summary-label">Practicantes</div>
+                        <div class="summary-value" style="color: #233559;">{{ $users->where('role', 'practitioner')->count() }}</div>
                     </td>
                 </tr>
             </table>
@@ -207,8 +207,8 @@
                         <div class="user-email">{{ $user->email }}</div>
                     </td>
                     <td>
-                        <span class="badge {{ $user->is_admin ? 'role-admin' : '' }}">
-                            {{ $user->is_admin ? 'Administrador' : 'Docente / Usuario' }}
+                        <span class="badge {{ $user->role === 'admin' ? 'role-admin' : '' }}">
+                            {{ $user->role === 'admin' ? 'Administrador' : 'Practicante' }}
                         </span>
                     </td>
                     <td style="color: #475569; font-weight: 500;">

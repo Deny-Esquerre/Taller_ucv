@@ -15,20 +15,11 @@
             margin: 0;
             padding: 0;
         }
-        /* Layout principal */
-        .page-content {
-            padding: 1.5cm;
-        }
         /* Encabezado profesional */
-        .header {
-            margin-bottom: 30px;
-        }
         .header-top {
             background-color: #233559;
             color: white;
-            padding: 20px 25px;
-            margin: -1.5cm -1.5cm 0 -1.5cm;
-            width: calc(100% + 3cm);
+            padding: 20px 1.5cm;
         }
         .header-top table {
             width: 100%;
@@ -69,9 +60,11 @@
         }
         .header-separator {
             height: 4px;
-            background: linear-gradient(90deg, #DC2626 0%, #ef4444 100%);
-            margin: 0 -1.5cm;
-            width: calc(100% + 3cm);
+            background-color: #DC2626;
+        }
+        /* Layout principal */
+        .page-content {
+            padding: 20px 1.5cm 2cm 1.5cm;
         }
         .summary-bar {
             background-color: #f8fafc;

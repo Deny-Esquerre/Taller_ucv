@@ -75,7 +75,11 @@ class WorkshopController extends Controller
 
         Workshop::create($data);
 
-        return response()->json(['message' => 'Taller creado exitosamente.']);
+        if ($request->wantsJson() && !$request->header('X-Inertia')) {
+            return response()->json(['message' => 'Taller creado exitosamente.']);
+        }
+
+        return redirect()->route('workshops.index')->with('message', 'Taller creado exitosamente.');
     }
 
     public function show(Workshop $workshop)
@@ -143,7 +147,11 @@ class WorkshopController extends Controller
 
         $workshop->update($data);
 
-        return response()->json(['message' => 'Taller actualizado exitosamente.']);
+        if ($request->wantsJson() && !$request->header('X-Inertia')) {
+            return response()->json(['message' => 'Taller actualizado exitosamente.']);
+        }
+
+        return redirect()->route('workshops.index')->with('message', 'Taller actualizado exitosamente.');
     }
 
     public function destroy(Workshop $workshop)
