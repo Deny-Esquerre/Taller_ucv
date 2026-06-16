@@ -1,17 +1,18 @@
-import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Sun, Moon, Coffee, ArrowLeft, Clock, MapPin, Globe, Info, Link as LinkIcon, CheckCircle2, Trash2, Edit2, Eye, User, Presentation, Contact, FileText, Copy, X } from 'lucide-react';
-import { useForm, router } from '@inertiajs/react';
-import { cn } from '@/lib/utils';
+import { useForm, router, Link } from '@inertiajs/react';
+import { ChevronLeft, ChevronRight, Sun, Moon, Coffee, ArrowLeft, CheckCircle2, Trash2, Edit2, Eye, User, Presentation, Contact, FileText, Copy, X, AlertCircle, Calendar } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { store as workshopsStore } from '@/routes/workshops/index';
 import { useNotifications } from '@/hooks/use-notifications';
+import { cn } from '@/lib/utils';
+import { store as workshopsStore } from '@/routes/workshops/index';
 
 interface Workshop {
     id: number;
@@ -59,6 +60,9 @@ interface WorkshopsCalendarProps {
     };
 }
 
+const MONTH_NAMES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+const YEARS = Array.from({ length: 11 }, (_, i) => 2020 + i);
+
 export default function WorkshopsCalendar({ workshops = [], blockedDays = [], authUser }: WorkshopsCalendarProps) {
     const { requestPermission, sendNotification } = useNotifications();
 
@@ -74,8 +78,10 @@ export default function WorkshopsCalendar({ workshops = [], blockedDays = [], au
     const [editingWorkshopId, setEditingWorkshopId] = useState<number | null>(null);
     const [viewingWorkshop, setViewingWorkshop] = useState<Workshop | null>(null);
     const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
+    const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, processing, reset, errors } = useForm({
         user_id: authUser?.id?.toString() || '',
         title: '',
         shift_date: '',
@@ -118,29 +124,39 @@ export default function WorkshopsCalendar({ workshops = [], blockedDays = [], au
     const getDayStatus = (date: Date) => {
         const dateString = date.toISOString().split('T')[0];
         const dbDay = blockedDays.find(d => d.date === dateString);
-        if (dbDay?.is_enabled) return { blocked: false, label: 'Día Habilitado', type: 'enabled' };
-        if (dbDay) return { blocked: true, label: dbDay.reason || 'Día No Laborable', type: 'blocked' };
-        if (date.getDay() === 0 || date.getDay() === 6) return { blocked: true, label: 'Día No Laborable', type: 'weekend' };
+        if (dbDay?.is_enabled) {
+            return { blocked: false, label: 'Día Habilitado', type: 'enabled' };
+        }
+        if (dbDay) {
+            return { blocked: true, label: dbDay.reason || 'Día No Laborable', type: 'blocked' };
+        }
+        if (date.getDay() === 0 || date.getDay() === 6) {
+            return { blocked: true, label: 'Día No Laborable', type: 'weekend' };
+        }
         return { blocked: false, label: '', type: 'available' };
     };
 
     const getWorkshopsForDate = (date: Date | null) => {
-        if (!date) return [];
+        if (!date) {
+            return [];
+        }
         const dateString = date.toISOString().split('T')[0];
         return workshops.filter((w) => w.shift_date.startsWith(dateString));
     };
 
-const handleDateClick = (date: Date) => {
+    const handleDateClick = (date: Date) => {
         const dateString = date.toISOString().split('T')[0];
         const status = getDayStatus(date);
         
-        if (status.blocked) return;
+        if (status.blocked) {
+            return;
+        }
         
         setSelectedDate(date);
         setSelectedShift(null);
         setIsEditing(false);
         setEditingWorkshopId(null);
-        reset({
+        (reset as any)({
             user_id: authUser.id.toString(),
             title: '',
             shift_date: dateString,
@@ -239,7 +255,7 @@ const handleEditWorkshop = (workshop: Workshop) => {
         const formData = {
             ...data,
             user_id: authUser.id.toString(),
-            year: parseInt(data.year) || new Date().getFullYear(),
+            year: parseInt(data.year.toString()) || new Date().getFullYear(),
             shift_date: data.shift_date || (selectedDate ? selectedDate.toISOString().split('T')[0] : ''),
         };
         
@@ -318,11 +334,38 @@ const handleEditWorkshop = (workshop: Workshop) => {
         })
         .catch(err => {
             console.error('Error:', err);
-            alert('Error: ' + err.message);
+            setErrorMessage(err.message);
+            setIsErrorDialogOpen(true);
         });
     };
 
-    const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    const handleMonthChange = (value: string) => {
+        const newMonth = MONTH_NAMES.indexOf(value);
+        if (newMonth !== -1) {
+            setCurrentDate(prev => new Date(prev.getFullYear(), newMonth, 1));
+        }
+    };
+
+    const handleYearChange = (value: string) => {
+        const newYear = parseInt(value);
+        if (!isNaN(newYear)) {
+            setCurrentDate(prev => new Date(newYear, prev.getMonth(), 1));
+        }
+    };
+
+    const hasWorkshopsInMonth = (mIndex: number, y: number) => {
+        return workshops.some(w => {
+            const date = new Date(w.shift_date + 'T00:00:00');
+            return date.getMonth() === mIndex && date.getFullYear() === y;
+        });
+    };
+
+    const hasWorkshopsInYear = (y: number) => {
+        return workshops.some(w => {
+            const date = new Date(w.shift_date + 'T00:00:00');
+            return date.getFullYear() === y;
+        });
+    };
 
     const days = [];
     for (let i = 0; i < firstDayOfMonth; i++) {
@@ -390,10 +433,51 @@ const handleEditWorkshop = (workshop: Workshop) => {
     return (
         <div className="space-y-6">
             <div className="bg-background rounded-2xl overflow-hidden border border-border/60">
-                <div className="flex items-center justify-between p-4 sm:p-5 border-b border-border/50 bg-muted/20">
-                    <h2 className="text-lg font-semibold tracking-tight text-foreground uppercase">
-                        {monthNames[month]} <span className="text-primary/70">{year}</span>
-                    </h2>
+                <div className="flex flex-col sm:flex-row items-center justify-between p-4 sm:p-5 gap-4 border-b border-border/50 bg-muted/20">
+                    <div className="flex items-center gap-3">
+                        <Select value={MONTH_NAMES[month]} onValueChange={handleMonthChange}>
+                            <SelectTrigger className="w-[160px] h-9 bg-background border-border/60 font-semibold uppercase tracking-tight px-3">
+                                <SelectValue placeholder="Mes" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {MONTH_NAMES.map((m, idx) => (
+                                    <SelectItem key={m} value={m} className="uppercase text-xs font-semibold">
+                                        <div className="flex items-center justify-between w-full gap-4">
+                                            <div className="flex items-center gap-2">
+                                                {idx === new Date().getMonth() && year === new Date().getFullYear() && (
+                                                    <Calendar className="h-3.5 w-3.5 text-blue-500 shrink-0 mr-1" />
+                                                )}
+                                                <span>{m}</span>
+                                            </div>
+                                            {hasWorkshopsInMonth(idx, year) && <CheckCircle2 className="h-3.5 w-3.5 text-green-500 shrink-0" />}
+                                        </div>
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+
+                        <Select value={year.toString()} onValueChange={handleYearChange}>
+                            <SelectTrigger className="w-[120px] h-9 bg-background border-border/60 font-semibold text-primary/70 px-3">
+                                <SelectValue placeholder="Año" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {YEARS.map((y) => (
+                                    <SelectItem key={y} value={y.toString()} className="font-semibold">
+                                        <div className="flex items-center justify-between w-full gap-4">
+                                            <div className="flex items-center gap-2">
+                                                {y === new Date().getFullYear() && (
+                                                    <Calendar className="h-3.5 w-3.5 text-blue-500 shrink-0 mr-1" />
+                                                )}
+                                                <span>{y}</span>
+                                            </div>
+                                            {hasWorkshopsInYear(y) && <CheckCircle2 className="h-3.5 w-3.5 text-green-500 shrink-0" />}
+                                        </div>
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    
                     <div className="flex gap-1.5">
                         <Button variant="outline" size="icon" className="h-8 w-8 border-border/60 hover:bg-accent text-foreground" onClick={prevMonth}><ChevronLeft className="h-4 w-4" /></Button>
                         <Button variant="outline" size="icon" className="h-8 w-8 border-border/60 hover:bg-accent text-foreground" onClick={nextMonth}><ChevronRight className="h-4 w-4" /></Button>
@@ -401,6 +485,7 @@ const handleEditWorkshop = (workshop: Workshop) => {
                 </div>
                 <div className="grid grid-cols-7 bg-background">{days}</div>
             </div>
+
 
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogContent className="sm:max-w-2xl lg:max-w-3xl max-h-[90vh] overflow-hidden flex flex-col p-0 border-none bg-background shadow-2xl rounded-2xl">
@@ -667,6 +752,28 @@ const handleEditWorkshop = (workshop: Workshop) => {
                             </div>
                         </div>
                     )}
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={isErrorDialogOpen} onOpenChange={setIsErrorDialogOpen}>
+                <DialogContent className="sm:max-w-md bg-white dark:bg-neutral-900 border-none shadow-2xl rounded-2xl">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2 text-destructive">
+                            <AlertCircle className="h-5 w-5" />
+                            Error de Registro
+                        </DialogTitle>
+                        <DialogDescription className="text-muted-foreground">
+                            No se pudo completar la operación debido al siguiente motivo:
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="py-4">
+                        <div className="rounded-lg bg-destructive/10 p-4 text-sm text-destructive border border-destructive/20 font-medium">
+                            {errorMessage}
+                        </div>
+                    </div>
+                    <div className="flex justify-end gap-3 mt-2">
+                        <Button variant="outline" onClick={() => setIsErrorDialogOpen(false)} className="rounded-lg">Entendido</Button>
+                    </div>
                 </DialogContent>
             </Dialog>
         </div>

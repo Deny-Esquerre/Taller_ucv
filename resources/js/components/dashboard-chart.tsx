@@ -95,7 +95,6 @@ export function ChartAreaInteractive({ data = [] }: { data: any[] }) {
             config={chartConfig}
             className="h-full w-full"
             >
-            <ResponsiveContainer width="100%" height="100%">
                 <AreaChart 
                     data={filteredData}
                     margin={{ left: 0, right: 0, top: 10, bottom: 0 }}
@@ -144,7 +143,7 @@ export function ChartAreaInteractive({ data = [] }: { data: any[] }) {
                     cursor={{ stroke: '#DC2626', strokeWidth: 1, strokeDasharray: '4 4' }}
                     content={
                         <ChartTooltipContent
-                            labelFormatter={(value) => {
+                            labelFormatter={(value: any) => {
                                 const date = new Date(value + "T00:00:00");
                                 return date.toLocaleDateString("es-ES", {
                                     weekday: 'long',
@@ -167,7 +166,6 @@ export function ChartAreaInteractive({ data = [] }: { data: any[] }) {
                     />
                     <ChartLegend content={<ChartLegendContent />} />
                 </AreaChart>
-            </ResponsiveContainer>
             </ChartContainer>
         </div>
       </CardContent>

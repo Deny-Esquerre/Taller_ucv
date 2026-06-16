@@ -70,6 +70,24 @@ class WorkshopController extends Controller
             'location', 'year', 'status'
         ]);
 
+        // Validar que no haya otro taller en la misma fecha y turno
+        $exists = Workshop::where('shift_date', $data['shift_date'])
+            ->where('shift_type', $data['shift_type'])
+            ->exists();
+
+        if ($exists) {
+            return back()->withErrors(['shift_date' => 'Ya existe un taller programado para esta fecha y turno.']);
+        }
+
+        // Validar contra días bloqueados
+        $blocked = \App\Models\BlockedDay::where('date', $data['shift_date'])
+            ->where('is_enabled', true)
+            ->first();
+
+        if ($blocked) {
+            return back()->withErrors(['shift_date' => 'La fecha está bloqueada: ' . $blocked->reason]);
+        }
+
         $data['year'] = $data['year'] ?: date('Y');
         $data['status'] = $data['status'] ?? 'scheduled';
 
@@ -142,6 +160,25 @@ class WorkshopController extends Controller
             'event_photos', 'comments', 'representative', 'email', 'modality', 'meeting_link',
             'location', 'year'
         ]);
+
+        // Validar que no haya otro taller en la misma fecha y turno (excluyendo el actual)
+        $exists = Workshop::where('shift_date', $data['shift_date'])
+            ->where('shift_type', $data['shift_type'])
+            ->where('id', '!=', $workshop->id)
+            ->exists();
+
+        if ($exists) {
+            return back()->withErrors(['shift_date' => 'Ya existe otro taller programado para esta fecha y turno.']);
+        }
+
+        // Validar contra días bloqueados
+        $blocked = \App\Models\BlockedDay::where('date', $data['shift_date'])
+            ->where('is_enabled', true)
+            ->first();
+
+        if ($blocked) {
+            return back()->withErrors(['shift_date' => 'La fecha está bloqueada: ' . $blocked->reason]);
+        }
 
         $data['year'] = $data['year'] ?: date('Y');
 

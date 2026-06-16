@@ -19,6 +19,7 @@ interface Workshop {
     email: string;
     modality: 'virtual' | 'presencial';
     year: number;
+    status: 'scheduled' | 'completed';
 }
 
 interface Props {

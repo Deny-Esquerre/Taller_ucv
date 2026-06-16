@@ -4,7 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { ArrowLeft, AlertCircle } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { index as workshopsIndex, store, create as workshopsCreate } from '@/routes/workshops/index';
 
 interface User {
@@ -20,6 +22,7 @@ interface Props {
 
 export default function Create({ users, duplicateFrom }: Props) {
     const urlParams = new URLSearchParams(window.location.search);
+    const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
     
     const { data, setData, post, processing, errors } = useForm({
         user_id: duplicateFrom?.user_id?.toString() || '',
@@ -50,6 +53,12 @@ export default function Create({ users, duplicateFrom }: Props) {
         event_photos: duplicateFrom?.event_photos || '',
         comments: duplicateFrom?.comments || '',
     });
+
+    useEffect(() => {
+        if (Object.keys(errors).length > 0) {
+            setIsErrorDialogOpen(true);
+        }
+    }, [errors]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -465,6 +474,37 @@ export default function Create({ users, duplicateFrom }: Props) {
                     </CardContent>
                 </Card>
             </div>
+
+            <Dialog open={isErrorDialogOpen} onOpenChange={setIsErrorDialogOpen}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2 text-destructive">
+                            <AlertCircle className="h-5 w-5" />
+                            No se pudo {duplicateFrom ? 'duplicar' : 'registrar'} el taller
+                        </DialogTitle>
+                        <DialogDescription>
+                            {duplicateFrom 
+                                ? 'Hubo un problema al intentar duplicar la información en la nueva fecha:'
+                                : 'Por favor, corrige los siguientes inconvenientes:'}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-3 py-4">
+                        {Object.entries(errors).map(([field, message]) => (
+                            <div key={field} className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive border border-destructive/20 shadow-sm">
+                                <div className="font-bold mb-1 flex items-center gap-2">
+                                    <span className="capitalize">{field === 'shift_date' ? 'Fecha y Turno' : field === 'shift_type' ? 'Turno' : field}:</span>
+                                </div>
+                                <div className="opacity-90">{message}</div>
+                            </div>
+                        ))}
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setIsErrorDialogOpen(false)} className="w-full sm:w-auto">
+                            Cerrar y corregir
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </>
     );
 }

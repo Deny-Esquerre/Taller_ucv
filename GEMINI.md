@@ -80,3 +80,8 @@ El sistema permite:
 - Marcar días bloqueados para evitar programaciones conflictivas.
 - Exportar reportes de talleres y usuarios a PDF (DomPDF) y Excel (PhpSpreadsheet).
 - Sistema de permisos granulares para roles.
+
+## Seguimiento del Proyecto
+
+El progreso del desarrollo se gestiona mediante un tablero Scrum ubicado en:
+- `SCRUM_BOARD.md`: Contiene las épicas, sprints y tareas detalladas del sistema.

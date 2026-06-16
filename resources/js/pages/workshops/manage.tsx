@@ -10,6 +10,7 @@ import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface BlockedDay {
     id: number;
@@ -26,6 +27,9 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Talleres', href: '/workshops' },
     { title: 'Disponibilidad', href: '/workshops/manage' },
 ];
+
+const MONTH_NAMES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+const YEARS = Array.from({ length: 11 }, (_, i) => 2020 + i);
 
 export default function WorkshopManage({ allBlocked = [] }: Props) {
     useFlashToast();
@@ -97,7 +101,19 @@ export default function WorkshopManage({ allBlocked = [] }: Props) {
         });
     };
 
-    const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    const handleMonthChange = (value: string) => {
+        const newMonth = MONTH_NAMES.indexOf(value);
+        if (newMonth !== -1) {
+            setCurrentDate(prev => new Date(prev.getFullYear(), newMonth, 1));
+        }
+    };
+
+    const handleYearChange = (value: string) => {
+        const newYear = parseInt(value);
+        if (!isNaN(newYear)) {
+            setCurrentDate(prev => new Date(newYear, prev.getMonth(), 1));
+        }
+    };
 
     const renderCalendarDays = () => {
         const days = [];
@@ -192,10 +208,31 @@ export default function WorkshopManage({ allBlocked = [] }: Props) {
 
                 <div className="lg:col-span-8 space-y-6">
                     <div className="bg-background rounded-2xl overflow-hidden border border-border/60 shadow-sm">
-                        <div className="flex items-center justify-between p-4 border-b border-border/40 bg-muted/10">
-                            <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider">
-                                {monthNames[month]} <span className="text-primary/60">{year}</span>
-                            </h2>
+                        <div className="flex flex-col sm:flex-row items-center justify-between p-4 gap-4 border-b border-border/40 bg-muted/10">
+                            <div className="flex items-center gap-3">
+                                <Select value={MONTH_NAMES[month]} onValueChange={handleMonthChange}>
+                                    <SelectTrigger className="w-[140px] h-9 bg-background border-border/60 text-xs font-semibold uppercase tracking-wider">
+                                        <SelectValue placeholder="Mes" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {MONTH_NAMES.map((m) => (
+                                            <SelectItem key={m} value={m} className="uppercase text-[10px] font-semibold tracking-wider">{m}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+
+                                <Select value={year.toString()} onValueChange={handleYearChange}>
+                                    <SelectTrigger className="w-[100px] h-9 bg-background border-border/60 text-xs font-semibold text-primary/60">
+                                        <SelectValue placeholder="Año" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {YEARS.map((y) => (
+                                            <SelectItem key={y} value={y.toString()} className="font-semibold text-xs">{y}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            
                             <div className="flex gap-1">
                                 <Button variant="ghost" size="icon" className="h-8 w-8 text-foreground" onClick={prevMonth}><ChevronLeft className="h-4 w-4" /></Button>
                                 <Button variant="ghost" size="icon" className="h-8 w-8 text-foreground" onClick={nextMonth}><ChevronRight className="h-4 w-4" /></Button>
