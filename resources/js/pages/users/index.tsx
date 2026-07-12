@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Head, useForm } from '@inertiajs/react';
+import { useState, useEffect } from 'react';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
@@ -82,14 +82,18 @@ export default function UserIndex({ users }: Props) {
     });
 
     const { errors: createErrors } = createForm;
+    const { props } = usePage();
+    const serverErrors = (props as any).errors || {};
+
+    useEffect(() => {
+        if (Object.keys(serverErrors).length > 0) {
+            setIsCreateOpen(true);
+        }
+    }, [serverErrors]);
 
     const handleCreateSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        createForm.post('/users', {
-            onError: () => {
-                setIsCreateOpen(true);
-            },
-        });
+        createForm.post('/users');
     };
 
     const openEditModal = (user: User) => {
