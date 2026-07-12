@@ -10,7 +10,7 @@ import {
     TableHeader, 
     TableRow 
 } from '@/components/ui/table';
-import { Edit, Trash2, UserPlus, Mail, ShieldAlert, UserCog, Calendar, MoreHorizontal } from 'lucide-react';
+import { Edit, Trash2, UserPlus, Mail, ShieldAlert, UserCog, Calendar, MoreHorizontal, Check } from 'lucide-react';
 import { 
     AlertDialog,
     AlertDialogAction,
@@ -84,6 +84,16 @@ export default function UserIndex({ users }: Props) {
     const { errors: createErrors } = createForm;
     const { props } = usePage();
     const serverErrors = (props as any).errors || {};
+
+    const password = createForm.data.password;
+    const passwordRules = [
+        { label: 'Mínimo 12 caracteres', met: password.length >= 12 },
+        { label: 'Una mayúscula', met: /[A-Z]/.test(password) },
+        { label: 'Una minúscula', met: /[a-z]/.test(password) },
+        { label: 'Un número', met: /\d/.test(password) },
+        { label: 'Un símbolo (!@#$%^&*)', met: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password) },
+    ];
+    const allRulesMet = passwordRules.every(r => r.met);
 
     useEffect(() => {
         if (Object.keys(serverErrors).length > 0) {
@@ -272,7 +282,7 @@ export default function UserIndex({ users }: Props) {
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1.5">
                                     <Label className="text-xs font-medium text-muted-foreground ml-1">Contraseña</Label>
-                                    <Input type="password" value={createForm.data.password} onChange={e => createForm.setData('password', e.target.value)} className="bg-muted/40 border-border/50 h-10 rounded-lg px-4 text-sm" />
+                                    <Input type="password" value={createForm.data.password} onChange={e => createForm.setData('password', e.target.value)} className={cn("bg-muted/40 border-border/50 h-10 rounded-lg px-4 text-sm", allRulesMet && password.length > 0 && "border-green-500/50 bg-green-500/5")} />
                                     {createErrors.password && <p className="text-xs text-destructive mt-1">{createErrors.password}</p>}
                                 </div>
                                 <div className="space-y-1.5">
@@ -280,6 +290,21 @@ export default function UserIndex({ users }: Props) {
                                     <Input type="password" value={createForm.data.password_confirmation} onChange={e => createForm.setData('password_confirmation', e.target.value)} className="bg-muted/40 border-border/50 h-10 rounded-lg px-4 text-sm" />
                                 </div>
                             </div>
+                            {password.length > 0 && (
+                                <div className="space-y-1.5 px-1">
+                                    {passwordRules.map((rule, i) => (
+                                        <div key={i} className="flex items-center gap-2 text-xs">
+                                            <div className={cn(
+                                                "flex h-4 w-4 items-center justify-center rounded-full transition-colors",
+                                                rule.met ? "bg-green-500 text-white" : "bg-muted/50 text-muted-foreground/40"
+                                            )}>
+                                                <Check className="h-2.5 w-2.5" />
+                                            </div>
+                                            <span className={cn("transition-colors", rule.met ? "text-green-600 font-medium" : "text-muted-foreground/50")}>{rule.label}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                         <Button type="submit" className="w-full bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90 h-10 rounded-lg font-medium mt-4 transition-all" disabled={createForm.processing}>
                             Crear cuenta
