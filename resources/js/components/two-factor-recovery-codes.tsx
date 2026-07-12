@@ -10,7 +10,6 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { regenerateRecoveryCodes } from '@/routes/two-factor';
 
 type Props = {
     recoveryCodesList: string[];
@@ -57,11 +56,10 @@ export default function TwoFactorRecoveryCodes({
             <CardHeader>
                 <CardTitle className="flex gap-3">
                     <LockKeyhole className="size-4" aria-hidden="true" />
-                    2FA recovery codes
+                    Códigos de recuperación 2FA
                 </CardTitle>
                 <CardDescription>
-                    Recovery codes let you regain access if you lose your 2FA
-                    device. Store them in a secure password manager.
+                    Los códigos de recuperación te permiten recuperar el acceso si pierdes tu dispositivo de autenticación. Guárdalos en un gestor de contraseñas seguro.
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -81,7 +79,8 @@ export default function TwoFactorRecoveryCodes({
 
                     {canRegenerateCodes && (
                         <Form
-                            {...regenerateRecoveryCodes.form()}
+                            action="/user/two-factor-recovery-codes"
+                            method="post"
                             options={{ preserveScroll: true }}
                             onSuccess={fetchRecoveryCodes}
                         >
