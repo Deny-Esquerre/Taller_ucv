@@ -81,10 +81,15 @@ export default function UserIndex({ users }: Props) {
         role: 'practitioner' as const,
     });
 
+    const { errors: createErrors } = createForm;
+
     const handleCreateSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        console.log('Creating user with data:', createForm.data);
-        createForm.post('/users');
+        createForm.post('/users', {
+            onError: () => {
+                setIsCreateOpen(true);
+            },
+        });
     };
 
     const openEditModal = (user: User) => {
@@ -244,10 +249,12 @@ export default function UserIndex({ users }: Props) {
                             <div className="space-y-1.5">
                                 <Label className="text-xs font-medium text-muted-foreground ml-1">Nombre completo</Label>
                                 <Input value={createForm.data.name} onChange={e => createForm.setData('name', e.target.value)} className="bg-muted/40 border-border/50 h-10 rounded-lg px-4 text-sm" />
+                                {createErrors.name && <p className="text-xs text-destructive mt-1">{createErrors.name}</p>}
                             </div>
                             <div className="space-y-1.5">
                                 <Label className="text-xs font-medium text-muted-foreground ml-1">Correo institucional</Label>
                                 <Input type="email" value={createForm.data.email} onChange={e => createForm.setData('email', e.target.value)} className="bg-muted/40 border-border/50 h-10 rounded-lg px-4 text-sm" />
+                                {createErrors.email && <p className="text-xs text-destructive mt-1">{createErrors.email}</p>}
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1.5">
@@ -262,6 +269,7 @@ export default function UserIndex({ users }: Props) {
                                 <div className="space-y-1.5">
                                     <Label className="text-xs font-medium text-muted-foreground ml-1">Contraseña</Label>
                                     <Input type="password" value={createForm.data.password} onChange={e => createForm.setData('password', e.target.value)} className="bg-muted/40 border-border/50 h-10 rounded-lg px-4 text-sm" />
+                                    {createErrors.password && <p className="text-xs text-destructive mt-1">{createErrors.password}</p>}
                                 </div>
                                 <div className="space-y-1.5">
                                     <Label className="text-xs font-medium text-muted-foreground ml-1">Confirmar contraseña</Label>
