@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Calendar as CalendarIcon, Trash2, Lock, Info, ChevronLeft, ChevronRight, Unlock } from 'lucide-react';
+import { Calendar as CalendarIcon, Lock, Info, ChevronLeft, ChevronRight, Unlock } from 'lucide-react';
 import { useFlashToast } from '@/hooks/use-flash-toast';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
@@ -38,7 +38,7 @@ export default function WorkshopManage({ allBlocked = [] }: Props) {
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const [isActionModalOpen, setIsActionModalOpen] = useState(false);
 
-    const { data, setData, post, processing, reset, delete: destroyAction } = useForm({
+    const { data, setData, post, processing, reset } = useForm({
         date: '',
         reason: '',
         is_enabled: false,
@@ -91,13 +91,6 @@ export default function WorkshopManage({ allBlocked = [] }: Props) {
             onError: (errors) => {
                 console.error("Errores:", errors);
             }
-        });
-    };
-
-    const handleReset = (id: number) => {
-        destroyAction(route('workshops.manage.destroy', id), {
-            preserveScroll: true,
-            onSuccess: () => setIsActionModalOpen(false),
         });
     };
 
@@ -305,18 +298,7 @@ export default function WorkshopManage({ allBlocked = [] }: Props) {
                             </div>
                         </div>
 
-                        <DialogFooter className="p-6 pt-0 flex gap-2">
-                            {getDayInfo(selectedDate || '').id && (
-                                <Button 
-                                    type="button" 
-                                    variant="ghost" 
-                                    onClick={() => handleReset(getDayInfo(selectedDate!).id!)}
-                                    className="h-11 px-3 text-destructive hover:bg-red-50 hover:text-red-700 rounded-xl"
-                                    title="Quitar regla"
-                                >
-                                    <Trash2 className="h-4 w-4" />
-                                </Button>
-                            )}
+                        <DialogFooter className="p-6 pt-0">
                             <Button 
                                 type="submit" 
                                 disabled={processing}
