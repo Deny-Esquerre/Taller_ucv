@@ -14,12 +14,14 @@ type Props = {
     canManageTwoFactor?: boolean;
     requiresConfirmation?: boolean;
     twoFactorEnabled?: boolean;
+    twoFactorPendingConfirmation?: boolean;
 };
 
 export default function Security({
     canManageTwoFactor = false,
     requiresConfirmation = false,
     twoFactorEnabled = false,
+    twoFactorPendingConfirmation = false,
 }: Props) {
     const passwordInput = useRef<HTMLInputElement>(null);
     const currentPasswordInput = useRef<HTMLInputElement>(null);
@@ -45,6 +47,15 @@ export default function Security({
 
         prevTwoFactorEnabled.current = twoFactorEnabled;
     }, [twoFactorEnabled, clearTwoFactorAuthData]);
+
+    useEffect(() => {
+        if (twoFactorPendingConfirmation && !hasSetupData) {
+            fetchSetupData();
+        }
+        if (twoFactorPendingConfirmation) {
+            setShowSetupModal(true);
+        }
+    }, [twoFactorPendingConfirmation]);
 
     return (
         <>
@@ -180,33 +191,34 @@ export default function Security({
                                 errors={errors}
                             />
                         </div>
+                    ) : twoFactorPendingConfirmation ? (
+                        <div className="flex flex-col items-start justify-start space-y-4">
+                            <p className="text-sm text-muted-foreground">
+                                La autenticación de dos factores está pendiente de confirmación. Escanea el código QR con tu aplicación de autenticación y confirma el código.
+                            </p>
+
+                            <Button onClick={() => setShowSetupModal(true)}>
+                                <ShieldCheck />
+                                Completar configuración
+                            </Button>
+                        </div>
                     ) : (
                         <div className="flex flex-col items-start justify-start space-y-4">
                             <p className="text-sm text-muted-foreground">
                                 Cuando activas la autenticación de dos factores, se te pedirá un pin seguro durante el inicio de sesión. Este pin puede ser obtenido de una aplicación compatible con TOTP en tu teléfono.
                             </p>
 
-                            <div>
-                                {hasSetupData ? (
+                            <Form action="/user/two-factor-authentication" method="post">
+                                {({ processing }) => (
                                     <Button
-                                        onClick={() => setShowSetupModal(true)}
+                                        type="submit"
+                                        disabled={processing}
                                     >
                                         <ShieldCheck />
-                                        Continuar configuración
+                                        Activar 2FA
                                     </Button>
-) : (
-                                    <Form action="/user/two-factor-authentication" method="post">
-                                    {({ processing }) => (
-                                            <Button
-                                                type="submit"
-                                                disabled={processing}
-                                            >
-                                                Activar 2FA
-                                            </Button>
-                                        )}
-                                    </Form>
                                 )}
-                            </div>
+                            </Form>
                         </div>
                     )}
 

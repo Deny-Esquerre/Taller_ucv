@@ -39,6 +39,7 @@ class SecurityController extends Controller implements HasMiddleware
 
             $props['twoFactorEnabled'] = $request->user()->hasEnabledTwoFactorAuthentication();
             $props['requiresConfirmation'] = Features::optionEnabled(Features::twoFactorAuthentication(), 'confirm');
+            $props['twoFactorPendingConfirmation'] = $request->user()->two_factor_secret !== null && !$request->user()->hasEnabledTwoFactorAuthentication();
         }
 
         return Inertia::render('settings/security', $props);
