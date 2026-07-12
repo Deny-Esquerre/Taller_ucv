@@ -9,17 +9,17 @@ import passwordRoutes from '@/routes/password';
 export default function ConfirmPassword() {
     return (
         <>
-            <Head title="Confirm password" />
+            <Head title="Confirmar contraseña" />
 
             <Form action="/user/confirm-password" method="post">
                 {({ processing, errors }) => (
                     <div className="space-y-6">
                         <div className="grid gap-2">
-                            <Label htmlFor="password">Password</Label>
+                            <Label htmlFor="password">Contraseña</Label>
                             <PasswordInput
                                 id="password"
                                 name="password"
-                                placeholder="Password"
+                                placeholder="Contraseña"
                                 autoComplete="current-password"
                                 autoFocus
                             />
@@ -34,7 +34,7 @@ export default function ConfirmPassword() {
                                 data-test="confirm-password-button"
                             >
                                 {processing && <Spinner />}
-                                Confirm password
+                                Confirmar contraseña
                             </Button>
                         </div>
                     </div>
