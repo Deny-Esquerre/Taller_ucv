@@ -38,7 +38,7 @@ class WorkshopManagementController extends Controller
             ]
         );
 
-        $action = $request->is_enabled ? 'blocked' : 'unblocked';
+        $action = $request->is_enabled ? 'unblocked' : 'blocked';
         
         $admins = User::where('role', 'admin')->get();
         
