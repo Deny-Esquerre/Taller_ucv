@@ -80,12 +80,26 @@ class WorkshopController extends Controller
         }
 
         // Validar contra días bloqueados
-        $blocked = \App\Models\BlockedDay::where('date', $data['shift_date'])
-            ->where('is_enabled', true)
-            ->first();
+        $dayOfWeek = date('N', strtotime($data['shift_date']));
+        $isWeekend = ($dayOfWeek == 6 || $dayOfWeek == 7);
 
-        if ($blocked) {
-            return back()->withErrors(['shift_date' => 'La fecha está bloqueada: ' . $blocked->reason]);
+        $blockedDayRule = \App\Models\BlockedDay::where('date', $data['shift_date'])->first();
+
+        $isBlocked = false;
+        $reason = 'Día no laborable';
+
+        if ($blockedDayRule) {
+            if (!$blockedDayRule->is_enabled) {
+                $isBlocked = true;
+                $reason = $blockedDayRule->reason ?: 'Día bloqueado manualmente';
+            }
+        } elseif ($isWeekend) {
+            $isBlocked = true;
+            $reason = 'Fin de semana';
+        }
+
+        if ($isBlocked) {
+            return back()->withErrors(['shift_date' => 'La fecha está bloqueada: ' . $reason]);
         }
 
         $data['year'] = $data['year'] ?: date('Y');
@@ -172,12 +186,26 @@ class WorkshopController extends Controller
         }
 
         // Validar contra días bloqueados
-        $blocked = \App\Models\BlockedDay::where('date', $data['shift_date'])
-            ->where('is_enabled', true)
-            ->first();
+        $dayOfWeek = date('N', strtotime($data['shift_date']));
+        $isWeekend = ($dayOfWeek == 6 || $dayOfWeek == 7);
 
-        if ($blocked) {
-            return back()->withErrors(['shift_date' => 'La fecha está bloqueada: ' . $blocked->reason]);
+        $blockedDayRule = \App\Models\BlockedDay::where('date', $data['shift_date'])->first();
+
+        $isBlocked = false;
+        $reason = 'Día no laborable';
+
+        if ($blockedDayRule) {
+            if (!$blockedDayRule->is_enabled) {
+                $isBlocked = true;
+                $reason = $blockedDayRule->reason ?: 'Día bloqueado manualmente';
+            }
+        } elseif ($isWeekend) {
+            $isBlocked = true;
+            $reason = 'Fin de semana';
+        }
+
+        if ($isBlocked) {
+            return back()->withErrors(['shift_date' => 'La fecha está bloqueada: ' . $reason]);
         }
 
         $data['year'] = $data['year'] ?: date('Y');
