@@ -103,7 +103,12 @@ export default function UserIndex({ users }: Props) {
 
     const handleCreateSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        createForm.post('/users');
+        createForm.post('/users', {
+            onSuccess: () => {
+                setIsCreateOpen(false);
+                createForm.reset();
+            },
+        });
     };
 
     const openEditModal = (user: User) => {
