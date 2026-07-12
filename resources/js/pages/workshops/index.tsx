@@ -29,6 +29,7 @@ interface Props {
         user: {
             id: number;
             name: string;
+            permissions?: string[];
         }
     };
 }
@@ -59,7 +60,7 @@ export default function Index({ workshops = [], blockedDays = [], auth }: Props)
                 <section className="bg-background rounded-2xl border border-border/40 overflow-hidden shadow-sm transition-all">
                     {authUser ? (
                         <div className="p-1 sm:p-2">
-                            <WorkshopsCalendar workshops={workshops || []} blockedDays={blockedDays} authUser={authUser} />
+                            <WorkshopsCalendar workshops={workshops || []} blockedDays={blockedDays} authUser={authUser} permissions={authUser.permissions} />
                         </div>
                     ) : (
                         <div className="py-24 text-center bg-muted/5 m-4 border-dashed border border-border/40 rounded-xl">

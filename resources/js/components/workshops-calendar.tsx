@@ -58,12 +58,13 @@ interface WorkshopsCalendarProps {
         id: number;
         name: string;
     };
+    permissions?: string[];
 }
 
 const MONTH_NAMES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 const YEARS = Array.from({ length: 11 }, (_, i) => 2020 + i);
 
-export default function WorkshopsCalendar({ workshops = [], blockedDays = [], authUser }: WorkshopsCalendarProps) {
+export default function WorkshopsCalendar({ workshops = [], blockedDays = [], authUser, permissions = [] }: WorkshopsCalendarProps) {
     const { requestPermission, sendNotification } = useNotifications();
 
     useEffect(() => {
@@ -144,11 +145,23 @@ export default function WorkshopsCalendar({ workshops = [], blockedDays = [], au
         return workshops.filter((w) => w.shift_date.startsWith(dateString));
     };
 
+    const canCreate = permissions?.includes('workshops.create');
+    const canEdit = permissions?.includes('workshops.edit');
+
     const handleDateClick = (date: Date) => {
         const dateString = date.toISOString().split('T')[0];
         const status = getDayStatus(date);
         
         if (status.blocked) {
+            return;
+        }
+
+        const dayWorkshops = getWorkshopsForDate(date);
+        if (dayWorkshops.length > 0 && !canEdit) {
+            return;
+        }
+
+        if (dayWorkshops.length === 0 && !canCreate) {
             return;
         }
         
@@ -499,9 +512,9 @@ const handleEditWorkshop = (workshop: Workshop) => {
 
                     {!selectedShift ? (
                         <div className="grid gap-3 p-6 pt-4">
-                            <ShiftCard label="Mañana" time="07:00 - 12:00" icon={Coffee} color="yellow" workshop={getWorkshopsForDate(selectedDate!).find(w => w.shift_type === 'morning')} onSelect={() => handleShiftSelect('morning')} onComplete={handleCompleteWorkshop} onRelease={handleReleaseBlock} onEdit={handleEditWorkshop} onView={handleViewWorkshop} />
-                            <ShiftCard label="Tarde" time="12:00 - 18:00" icon={Sun} color="orange" workshop={getWorkshopsForDate(selectedDate!).find(w => w.shift_type === 'afternoon')} onSelect={() => handleShiftSelect('afternoon')} onComplete={handleCompleteWorkshop} onRelease={handleReleaseBlock} onEdit={handleEditWorkshop} onView={handleViewWorkshop} />
-                            <ShiftCard label="Noche" time="18:00 - 22:00" icon={Moon} color="blue" workshop={getWorkshopsForDate(selectedDate!).find(w => w.shift_type === 'night')} onSelect={() => handleShiftSelect('night')} onComplete={handleCompleteWorkshop} onRelease={handleReleaseBlock} onEdit={handleEditWorkshop} onView={handleViewWorkshop} />
+                            <ShiftCard label="Mañana" time="07:00 - 12:00" icon={Coffee} color="yellow" workshop={getWorkshopsForDate(selectedDate!).find(w => w.shift_type === 'morning')} onSelect={() => handleShiftSelect('morning')} onComplete={handleCompleteWorkshop} onRelease={handleReleaseBlock} onEdit={handleEditWorkshop} onView={handleViewWorkshop} permissions={permissions} />
+                            <ShiftCard label="Tarde" time="12:00 - 18:00" icon={Sun} color="orange" workshop={getWorkshopsForDate(selectedDate!).find(w => w.shift_type === 'afternoon')} onSelect={() => handleShiftSelect('afternoon')} onComplete={handleCompleteWorkshop} onRelease={handleReleaseBlock} onEdit={handleEditWorkshop} onView={handleViewWorkshop} permissions={permissions} />
+                            <ShiftCard label="Noche" time="18:00 - 22:00" icon={Moon} color="blue" workshop={getWorkshopsForDate(selectedDate!).find(w => w.shift_type === 'night')} onSelect={() => handleShiftSelect('night')} onComplete={handleCompleteWorkshop} onRelease={handleReleaseBlock} onEdit={handleEditWorkshop} onView={handleViewWorkshop} permissions={permissions} />
                         </div>
                     ) : (
                         <form onSubmit={handleRegisterSubmit} className="overflow-y-auto max-h-[calc(90vh-140px)] p-4 sm:p-6 border-t border-border/40 bg-muted/5">
@@ -673,7 +686,7 @@ const handleEditWorkshop = (workshop: Workshop) => {
                                     </p>
                                 </div>
                                 <div className="flex gap-2 shrink-0">
-                                    <Button asChild><Link href={`/workshops/duplicate/${viewingWorkshop.id}`}><Copy className="h-4 w-4 mr-2" /> Duplicar</Link></Button>
+                                    {canCreate && <Button asChild><Link href={`/workshops/duplicate/${viewingWorkshop.id}`}><Copy className="h-4 w-4 mr-2" /> Duplicar</Link></Button>}
                                     <Button variant="ghost" size="icon" onClick={() => setIsViewDialogOpen(false)} className="h-8 w-8"><X className="h-4 w-4" /></Button>
                                 </div>
                             </div>
@@ -805,9 +818,11 @@ function ShiftPreview({ label, workshop, icon: Icon, color, onView }: any) {
     );
 }
 
-function ShiftCard({ label, time, icon: Icon, color, workshop, onSelect, onComplete, onRelease, onEdit, onView }: any) {
+function ShiftCard({ label, time, icon: Icon, color, workshop, onSelect, onComplete, onRelease, onEdit, onView, permissions }: any) {
     const isOccupied = !!workshop;
     const isCompleted = workshop?.status === 'completed';
+    const canEdit = permissions?.includes('workshops.edit');
+    const canDelete = permissions?.includes('workshops.delete');
     return (
         <div className={cn("flex items-center justify-between p-4 rounded-xl border transition-all w-full", !isOccupied ? "border-border/60 bg-card hover:bg-muted/30 cursor-pointer" : "bg-muted/40 border-border/40")} onClick={!isOccupied ? onSelect : undefined}>
             <div className="flex items-center gap-4 text-foreground">
@@ -818,11 +833,11 @@ function ShiftCard({ label, time, icon: Icon, color, workshop, onSelect, onCompl
                 {isOccupied ? (
                     <div className="flex items-center gap-1.5">
                         <Button variant="ghost" size="icon" className="h-7 px-2 text-muted-foreground hover:text-foreground" onClick={(e) => { e.stopPropagation(); onView(workshop); }} title="Ver detalles"><Eye className="h-3.5 w-3.5" /></Button>
-                        <Button variant="ghost" size="icon" className="h-7 px-2 text-muted-foreground hover:text-foreground" onClick={(e) => { e.stopPropagation(); onEdit(workshop); }}><Edit2 className="h-3.5 w-3.5" /></Button>
+                        {canEdit && <Button variant="ghost" size="icon" className="h-7 px-2 text-muted-foreground hover:text-foreground" onClick={(e) => { e.stopPropagation(); onEdit(workshop); }}><Edit2 className="h-3.5 w-3.5" /></Button>}
                         {isCompleted ? (
-                            <><span className="text-[9px] font-bold uppercase bg-green-500/10 text-green-600 px-2 py-0.5 rounded-full border border-green-500/20 flex items-center gap-1"><CheckCircle2 className="h-2.5 w-2.5" /> FINALIZADO</span><Button variant="ghost" size="sm" className="h-7 px-2 text-destructive hover:bg-destructive/10" onClick={(e) => { e.stopPropagation(); onRelease(workshop.id); }}><Trash2 className="h-3.5 w-3.5" /></Button></>
+                            <>{canDelete && <span className="text-[9px] font-bold uppercase bg-green-500/10 text-green-600 px-2 py-0.5 rounded-full border border-green-500/20 flex items-center gap-1"><CheckCircle2 className="h-2.5 w-2.5" /> FINALIZADO</span>}{canDelete && <Button variant="ghost" size="sm" className="h-7 px-2 text-destructive hover:bg-destructive/10" onClick={(e) => { e.stopPropagation(); onRelease(workshop.id); }}><Trash2 className="h-3.5 w-3.5" /></Button>}</>
                         ) : (
-                            <><span className="text-[9px] font-bold uppercase bg-destructive/10 text-destructive px-2 py-0.5 rounded-full border border-destructive/20 mr-1">Ocupado</span><Button variant="outline" size="sm" className="h-7 text-[10px] font-bold border-primary/20 text-primary hover:bg-primary/5" onClick={(e) => { e.stopPropagation(); onComplete(workshop.id); }}>Finalizar</Button></>
+                            <><span className="text-[9px] font-bold uppercase bg-destructive/10 text-destructive px-2 py-0.5 rounded-full border border-destructive/20 mr-1">Ocupado</span>{canEdit && <Button variant="outline" size="sm" className="h-7 text-[10px] font-bold border-primary/20 text-primary hover:bg-primary/5" onClick={(e) => { e.stopPropagation(); onComplete(workshop.id); }}>Finalizar</Button>}</>
                         )}
                     </div>
                 ) : (

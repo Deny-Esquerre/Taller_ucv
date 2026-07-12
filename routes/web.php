@@ -35,10 +35,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // Gestión de Talleres
-    Route::put('/workshops/{workshop}/complete', [\App\Http\Controllers\WorkshopController::class, 'complete'])->name('workshops.complete');
     Route::get('/workshops/history', [\App\Http\Controllers\WorkshopHistoryController::class, 'index'])->name('workshops.history');
     Route::get('/workshops/duplicate/{workshop}', [\App\Http\Controllers\WorkshopHistoryController::class, 'duplicate'])->name('workshops.duplicate');
-    Route::resource('workshops', \App\Http\Controllers\WorkshopController::class);
+
+    // Talleres - lectura (todos los usuarios autenticados)
+    Route::get('/workshops', [\App\Http\Controllers\WorkshopController::class, 'index'])->name('workshops.index');
+    Route::get('/workshops/create', [\App\Http\Controllers\WorkshopController::class, 'create'])->name('workshops.create');
+    Route::get('/workshops/{workshop}', [\App\Http\Controllers\WorkshopController::class, 'show'])->name('workshops.show');
+
+    // Talleres - escritura (requieren permisos)
+    Route::post('/workshops', [\App\Http\Controllers\WorkshopController::class, 'store'])->name('workshops.store')->middleware('permission:workshops.create');
+    Route::get('/workshops/{workshop}/edit', [\App\Http\Controllers\WorkshopController::class, 'edit'])->name('workshops.edit')->middleware('permission:workshops.edit');
+    Route::put('/workshops/{workshop}', [\App\Http\Controllers\WorkshopController::class, 'update'])->name('workshops.update')->middleware('permission:workshops.edit');
+    Route::delete('/workshops/{workshop}', [\App\Http\Controllers\WorkshopController::class, 'destroy'])->name('workshops.destroy')->middleware('permission:workshops.delete');
+    Route::put('/workshops/{workshop}/complete', [\App\Http\Controllers\WorkshopController::class, 'complete'])->name('workshops.complete')->middleware('permission:workshops.edit');
 
     // Exportaciones
     Route::get('/export/pdf/workshops', [ExportController::class, 'exportWorkshopsPdf'])->name('export.workshops.pdf');
